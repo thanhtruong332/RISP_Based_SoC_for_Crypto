@@ -40,10 +40,65 @@ tính mới, venue khuyến nghị, baseline core khuyến nghị). Mục này c
 >    CHÍNH của paper).
 > 3. **§ TRẠNG THÁI IBEX** — số liệu Ibex đầy đủ (nhánh HW accelerator gốc).
 > 4. **§ CÔNG THỨC** và **§ CƠ SỞ ĐO** — quy ước tính toán, phải giữ nguyên.
+> 5. **§ BẢN SAO GITHUB** — repo private chứa toàn bộ project để mở ở máy
+>    khác + 4 phát hiện trạng thái thật (IP RV32I rev 1 vs 2...).
 >
 > Mọi mục còn lại là **lịch sử/tham khảo**. Các con số chu kỳ và power ghi
 > trong phần lịch sử (trước mục "TIẾN ĐỘ HIỆN TẠI") đều đo TRƯỚC khi sửa
 > `axi_rissp_master.v` (2026-08-13) nên **đã hết hạn** — đừng trích vào paper.
+
+## ☁️ BẢN SAO GITHUB ĐỂ MỞ Ở MÁY KHÁC (2026-10-08)
+
+Repo **private**: `https://github.com/thanhtruong332/RISSP-Paper-Vivado`
+(chỉ chủ repo + collaborator được mời xem được — GitHub không có chế độ
+"ai có link thì vào"). Bản làm việc liên kết với remote: `D:\RISSP_GH`.
+
+**Nội dung**: 6 project Vivado (3 SoC chính `SE-RISSP_AES_ULTRA`/
+`RV32I_soc_ULTRA`/`Ibex_SoC` + 3 SoC wolfSSL `RISSP_software`/
+`RV32I_software`/`Ibex_software`), 6 IP repo (`SE_RISSP_LIBRARY/
+{RISSP_CORE_NEW,AES_NEOS,SHA_3/SHA3_hardware_new_1_0}`, `RSA_mark03`,
+`RV32I_FIXED`, `Ibex_Core`), `Viettel_semi/{SE-RISSP,RV32I,Ibex}_FULL`
+(mọi `.coe` + testbench), board file ZedBoard, phần `RISSP_cORE` có trong
+tài liệu này (RTL, Docs, wolfSSL build + source đã vá). **Không** đưa
+`.runs/.sim/.cache`, bitstream, log (người dùng tự chạy lại synth/impl).
+Giữ nguyên cây thư mục máy gốc ở gốc repo nên đường dẫn `$PPRDIR/../..`
+sẵn có vẫn đúng. **Bản gốc trên máy này không bị sửa gì** — mọi chỉnh sửa
+chỉ làm trên bản sao.
+
+**Chỉnh sửa trong bản sao để chạy được ở máy khác**: đường dẫn tuyệt đối
+`d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi`, board XHub → tương đối (cả trong
+`.xpr`, `.bd`, `.xci`, `.gen/.../design_1_blk_mem_gen_0_0.xml`); gỡ tham
+chiếu file của nhánh tự-viết-tay đã xoá khỏi 3 project wolfSSL;
+`RISSP_software`/`Ibex_software` đổi `.coe` sang `rissp_wolfssl.coe` (qua
+`set_property`, không sửa text — sửa text làm IP khoá "stale content");
+`Ibex_FULL/run_manual_sim.tcl` + `run_all.bat` tính đường dẫn theo vị trí
+script.
+
+**Kiểm chứng trên bản clone ở đường dẫn khác** (đã đối chiếu tree hash
+bản trên GitHub trùng khít): 6/6 project mở được, 0 file thiếu, 0 file trỏ
+ra ngoài repo · `tb_sha3` RISSP PASS 492 ck · `tb_ibex_rsa2048` PASS
+320974 ck · `tb_ibex_ecb` (script tay) PASS 90 ck · `tb_rv32i_rsa2048`
+PASS 321039 ck · RV32I_soc_ULTRA Run Synthesis Complete 0 error — số chu kỳ
+khớp đúng bảng § TIẾN ĐỘ HIỆN TẠI.
+
+**4 phát hiện mới về trạng thái THẬT trên máy gốc** (không phải do bản sao):
+1. `RV32I_soc_ULTRA` dùng IP `rv32i_fixed` **revision 1** (trước sửa SRA),
+   IP repo đã lên **revision 2** → IP hiện "locked – different revision",
+   validate BD báo lỗi; vẫn mô phỏng + synthesis được bằng output đã sinh.
+   `RV32I_software` dùng revision 2. Xác nhận lại đúng mục "chưa áp dụng
+   bản sửa SRA cho SoC chính" — **đừng Upgrade IP** nếu muốn giữ số paper.
+2. `Ibex_SoC.xpr` còn 56 tham chiếu sim tới `ipshared/7317/` không tồn tại
+   (sót từ trước khi đóng gói lại IP). Đã gỡ trong bản sao.
+3. `Ibex_FULL/run_manual_sim.tcl` gốc **đang hỏng**: tìm 56 file `.sv` lẻ
+   trong `Ibex_Core/ip_repo/src`, nhưng sau khi đóng gói lại IP chỉ còn
+   `ibex_axi_top_combined.sv`. Bản sao đã vá (dùng file gộp) → PASS.
+4. Flow `export_simulation` cho Ibex **bỏ qua** define `SYNTHESIS` đặt
+   trong sim fileset → DPI-C của lowRISC bật → xelab lỗi biên dịch C. GUI
+   Run Simulation không bị (tự dùng define); flow dòng lệnh phải thêm
+   `xvlog -d SYNTHESIS`.
+
+Thư mục tạm có thể xoá: `D:\RISSP_GH_test`, `D:\RISSP_GH_t2`,
+`D:\RISSP_GH_t3`, `D:\RISSP_GH_fromgithub` (bản clone kiểm chứng).
 
 ## 🔐 wolfSSL THẬT TRÊN BARE-METAL — thay code tự viết bằng thư viện production
 
@@ -844,6 +899,13 @@ hỏi lại**, vì đây sẽ là nhượng bộ kiến trúc thứ 4.
   Tổng hợp toàn bộ số liệu 3 SoC thành artifact cho paper; sửa 1 lỗi tính
   tay (Energy RSA-2048 của Ibex dùng nhầm `POWER_W` của RISSP trong log
   testbench, số đúng dùng P=0,446W thật = 3578,86 µJ).
+- **Phiên 2026-10-08**: đưa toàn bộ 6 project + IP + `.coe` + testbench lên
+  GitHub private `thanhtruong332/RISSP-Paper-Vivado` để mở ở máy công ty,
+  kiểm chứng trên bản clone (PASS 4 mô phỏng + 1 synthesis). Xem § BẢN SAO
+  GITHUB. Người dùng chốt: **chỉ làm việc với những gì CLAUDE.md có nhắc
+  tới** — các thư mục không có trong tài liệu (`SHA3_Core_mark2/3`,
+  `soc_upgrade_20260916`, `github_upload`, `_audit_tmp`, `firmware_Aes`…)
+  không đụng vào, không đưa lên repo.
 
 ---
 

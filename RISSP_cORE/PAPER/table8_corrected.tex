@@ -1,0 +1,43 @@
+\begin{table}[!t]
+\centering
+\caption{Comprehensive Performance and Cycle Comparison}
+\label{tab:crypto_summary_comparison}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Engine} & \textbf{Operation / Mode} & \textbf{RISP} & \textbf{$\text{RV}32\text{I}$~\cite{harris2021digital}} & \textbf{Ibex~\cite{gallmann2021swift}} \\
+\midrule
+\multirow{8}{*}{$\text{AES}\text{-}128$}
+ & ECB (Cycles) & $88$ & $93$ & $90$ \\
+ & non-ECB (Cycles) & $124$ & $129$ & $126$ \\
+ & ECB (Mb/s) & $58.18$ & $55.05$ & $56.89$ \\
+ & Non-ECB (Mb/s) & $41.29$ & $39.69$ & $40.63$ \\
+ & ECB (nJ/bit) & $7.00$ & $7.95$ & $7.84$ \\
+ & Non-ECB (nJ/bit) & $9.85$ & $11.03$ & $10.97$ \\
+ & ECB (Mb/s/W) & $142.95$ & $125.68$ & $127.56$ \\
+ & Non-ECB (Mb/s/W) & $101.45$ & $90.62$ & $91.10$ \\
+\midrule
+\multirow{9}{*}{$\text{SHA}3$}
+ & $1\text{-}\text{block}$ (Cycles) & $492$ & $500$ & $496$ \\
+ & $1\text{-}\text{block}$ (Mb/s) & $83.25$ & $81.92$ & $82.58$ \\
+ & $1\text{-}\text{block}$ (Mb/s/W) & $204.55$ & $187.03$ & $185.16$ \\
+ & $4\text{-}\text{block}$ (Cycles) & $1,771$ & $1,911$ & $1,907$ \\
+ & $4\text{-}\text{block}$ (Mb/s) & $96.85$ & $89.75$ & $89.93$ \\
+ & $4\text{-}\text{block}$ (Mb/s/W) & $237.96$ & $204.91$ & $201.64$ \\
+ & $16\text{-}\text{block}$ (Cycles) & $6,871$ & $7,419$ & $7,415$ \\
+ & $16\text{-}\text{block}$ (Mb/s) & $100.97$ & $93.51$ & $93.56$ \\
+ & $16\text{-}\text{block}$ (Mb/s/W) & $248.08$ & $213.49$ & $209.78$ \\
+\midrule
+\multirow{4}{*}{$\text{RSA}\text{-}2048$}
+ & Verify (Cycles) & $320,972$ & $321,039$ & $320,974$ \\
+ & Energy ($\mu$J/bit) & $3,265.89$ & $3,515.38$ & $3,578.86$ \\
+ & Throughput (verify/s) & $124.62$ & $124.60$ & $124.62$ \\
+ & Throughput ($\text{Thpt}\cdot\text{W}^{-1}$) & $306.19$ & $284.47$ & $279.42$ \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{1pt}
+\raggedright
+\footnotesize\textit{Note:  ECB = Electronic Codebook mode; Non-ECB = CBC/CTR/CFB modes; AES cycles are per $128\text{-}\text{bit}$ block. $\text{SHA}3$ blocks correspond to $128\text{ } \text{B}$, $536\text{ }\text{B}$, and $2,168\text{ }\text{B}$ payloads. AES throughput in Mb/s; energy in nJ/bit. RSA energy in $\mu$J/bit and throughput per watt.}
+\end{table}

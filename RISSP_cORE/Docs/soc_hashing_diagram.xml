@@ -1,0 +1,173 @@
+<mxfile host="app.diagrams.net" modified="2026-08-10T00:00:00.000Z" agent="claude-code" version="24.7.5" type="device">
+  <diagram name="RISSP+SHA3 Hashing Overview" id="soc_hash_overview">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="RISSP + SHA3 SoC — Kiến trúc &amp; luồng Hashing" style="text;html=1;align=center;verticalAlign=middle;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1000" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Chú thích:&lt;br&gt;Cam = luồng Firmware Image (secure boot)&lt;br&gt;Xanh dương = luồng Test Image (generality)&lt;br&gt;Nét đứt xanh lá = đã verify PASS &amp;nbsp;·&amp;nbsp; nét đứt đỏ = TODO, chưa verify" style="rounded=1;whiteSpace=wrap;html=1;align=left;spacingLeft=8;fontSize=11;fillColor=#ffffff;strokeColor=#999999;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="10" width="380" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Container A: Offline preparation -->
+        <mxCell id="containerA" value="OFFLINE — Host PC (Python script + RISC-V toolchain riscv-none-elf-*)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;fontStyle=1;fontSize=13;spacingLeft=10;spacingTop=6;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1420" height="310" as="geometry" />
+        </mxCell>
+
+        <mxCell id="A0a" value="Firmware image&lt;br&gt;ota_demo.bin (448 byte)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="70" y="160" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A0b" value="Test image chuẩn&lt;br&gt;raw bitmap (1-4KB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="70" y="240" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A1" value="Đọc raw bytes&lt;br&gt;(script Python — không dùng web tool)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="300" y="200" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A2" value="Đóng gói big-endian&lt;br&gt;per-4-byte-chunk (convention SHA3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="510" y="200" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A3" value="Script sinh hash_image.s&lt;br&gt;unroll: li+li+sw mỗi từ 8-byte&lt;br&gt;(imem không có đường LW đọc được)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="720" y="190" width="190" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="A4" value="Assemble / Link / Objcopy&lt;br&gt;(riscv-none-elf-*)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="950" y="200" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A5" value="Convert .coe&lt;br&gt;(Xilinx BMG format)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="200" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="A6" value="hashlib.sha3_256()&lt;br&gt;→ ground truth digest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="950" y="310" width="170" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Container B: SoC hardware -->
+        <mxCell id="containerB" value="SoC trên FPGA (Zynq-7020, xc7z020clg484-1) — SE-RISSP + SHA3" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;fontStyle=1;fontSize=13;spacingLeft=10;spacingTop=6;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="1420" height="460" as="geometry" />
+        </mxCell>
+
+        <mxCell id="B_imem" value="imem (BRAM)&lt;br&gt;8192×32-bit = 32KB&lt;br&gt;[nạp từ .coe]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="70" y="500" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="B_fetch" value="fetch_stage&lt;br&gt;PC reg + fetch (1-cycle)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="B_modex" value="modular_ex&lt;br&gt;decode 1 lần +&lt;br&gt;6 block song song (R/I/B/J/U/S)&lt;br&gt;+ 3 khối dùng chung&lt;br&gt;(shifter / comparator / adder)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="520" y="480" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="B_rf" value="register_file&lt;br&gt;32×32-bit, LUTRAM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="520" y="620" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B_axim" value="axi_rissp_master&lt;br&gt;AXI4 bridge (stall CPU khi LOAD/STORE)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="810" y="500" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="B_ic" value="AXI4 Interconnect" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="500" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B_sha3" value="SHA3 Core (Keccak)&lt;br&gt;@ 0x44A00000" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="610" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="B_bram" value="BRAM debug/result&lt;br&gt;@ 0xC0000000 (8KB)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="720" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="B_note" value="Ghi chú: RISSP không có đường LW đọc imem → phải unroll toàn bộ image thành cụm li+sw cố định trong chương trình" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;dashed=1;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="70" y="790" width="240" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Container C: Verification -->
+        <mxCell id="containerC" value="Verification / Kết quả" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;fontStyle=1;fontSize=13;spacingLeft=10;spacingTop=6;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="910" width="1420" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="C_replay" value="Testbench replay&lt;br&gt;(vd. tb_hash_image_replay.v)&lt;br&gt;drive thẳng module Keccak" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="430" y="960" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="C_compare" value="So sánh digest&lt;br&gt;CPU/RTL tính ra vs&lt;br&gt;ground truth Python" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="700" y="960" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="C_result" value="[PASS] / [FAIL]&lt;br&gt;→ Integrity verified&lt;br&gt;(secure boot / generality)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="970" y="960" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: offline pipeline -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A0a" target="A1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A0b" target="A1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A1" target="A2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A2" target="A3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A3" target="A4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="A4" target="A5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="song song (ground truth)" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=10;" edge="1" parent="1" source="A1" target="A6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edge crossing into SoC -->
+        <mxCell id="e8" value="nạp vào Block Memory Generator" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="A5" target="B_imem">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: SoC datapath -->
+        <mxCell id="e9" value="insn" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_imem" target="B_fetch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="opcode / imm / pc" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_fetch" target="B_modex">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="rs1_addr / rs2_addr / rdest_addr" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=9;" edge="1" parent="1" source="B_modex" target="B_rf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="rs1_data / rs2_data" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=9;" edge="1" parent="1" source="B_rf" target="B_modex">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="LOAD/STORE addr+data" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_modex" target="B_axim">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="B_axim" target="B_ic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="ghi message words (unrolled li+sw)" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_ic" target="B_sha3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="đọc digest" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_sha3" target="B_ic">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="ghi digest + marker 0x600D600D" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="B_ic" target="B_bram">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: verification -->
+        <mxCell id="e18" value="chuỗi từ dùng verify RTL — đã PASS" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#82b366;fontColor=#82b366;fontSize=10;" edge="1" parent="1" source="A3" target="C_replay">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" value="chưa có testbench toàn SoC — TODO" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#b85450;fontColor=#b85450;fontSize=10;" edge="1" parent="1" source="B_bram" target="C_compare">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e20" value="ground truth" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=10;" edge="1" parent="1" source="A6" target="C_compare">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="C_replay" target="C_compare">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="C_compare" target="C_result">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

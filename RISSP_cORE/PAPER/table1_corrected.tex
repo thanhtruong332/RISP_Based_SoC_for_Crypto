@@ -1,0 +1,19 @@
+\begin{table}[h!]
+    \centering
+    \caption{Instructions retained and omitted in the RISP host}
+    \label{tab:instruction_types}
+    % Thiết lập bảng chiếm 50% độ rộng dòng văn bản
+    \begin{tabularx}{0.5\textwidth}{l X X}
+        \toprule
+        \textbf{Type} & \textbf{Retained Instructions} & \textbf{Omitted Instruction}\\
+        \midrule
+        B-type & BEQ, BNE, BLT, BGE, BLTU, BGEU & --- \\
+        R-type & ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND & --- \\
+        I-type & ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI & --- \\
+        Loads & LB, LW, LBU & LH, LHU \\
+        Stores & SB, SH, SW & --- \\
+        U-Types & LUI, AUIPC & --- \\
+        Jump & JAL, JALR & --- \\
+        \bottomrule
+    \end{tabularx}
+\end{table}

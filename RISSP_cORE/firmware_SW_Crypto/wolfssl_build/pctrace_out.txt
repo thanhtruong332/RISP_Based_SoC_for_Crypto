@@ -1,0 +1,82 @@
+
+****** xsim v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Tue Aug 18 13:35:49 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_wolfssl_rv32i_pctrace/xsim_script.tcl
+# xsim {tb_wolfssl_rv32i_pctrace} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+[pc-trace cyc=1] imem_addr=00000000 imem_rdata=c0002137
+[pc-trace cyc=2] imem_addr=00000008 imem_rdata=c0002137
+[pc-trace cyc=3] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=4] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=5] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=6] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=7] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=8] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=9] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=10] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=11] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=12] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=13] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=14] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=15] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=16] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=17] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=18] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=19] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=20] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=21] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=22] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=23] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=24] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=25] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=26] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=27] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=28] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=29] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=30] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=31] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=32] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=33] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=34] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=35] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=36] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=37] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=38] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=39] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=40] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=41] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=42] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=43] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=44] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=45] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=46] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=47] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=48] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=49] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=50] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=51] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=52] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=53] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=54] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=55] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=56] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=57] imem_addr=0000000c imem_rdata=0000006f
+[pc-trace cyc=58] imem_addr=00000010 imem_rdata=00050313
+[pc-trace cyc=59] imem_addr=00000008 imem_rdata=00060a63
+[pc-trace cyc=60] imem_addr=0000000c imem_rdata=0000006f
+[TIMEOUT] cyc=3000001 dmem[4]=00000000 (AES ct0=00000000)
+  START marker (0x14->dmem5)=00000000
+  RSA debug: InitRsaKey=0 mp_read_n=0 mp_set_e=0 mp_init_n=0 mp_init_e=0 n.size=0
+  PC-ish: imem_addr=00000010  progress_marker(0x60->dmem24)=0
+$finish called at time : 75000112500 ps : File "F:/RISSP_cORE/firmware_SW_Crypto/wolfssl_build/tb_isolate_wolfssl_rv32i.v" Line 136
+run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:13 . Memory (MB): peak = 194.219 ; gain = 0.000
+exit
+INFO: xsimkernel Simulation Memory Usage: 30524 KB (Peak: 30524 KB), Simulation CPU Usage: 13640 ms
+INFO: [Common 17-206] Exiting xsim at Tue Aug 18 13:36:04 2026...

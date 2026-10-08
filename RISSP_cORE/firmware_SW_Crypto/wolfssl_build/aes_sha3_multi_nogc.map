@@ -1,0 +1,555 @@
+Archive member included to satisfy reference by file (symbol)
+
+F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+                              misc_riscv.o (__lshrdi3)
+F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+                              misc_riscv.o (__ashldi3)
+F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+                              sha3_riscv.o (__udivsi3)
+F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+                              misc_riscv.o (strlen)
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD start.o
+LOAD aes_sha3_multi.o
+LOAD aes_riscv.o
+LOAD sha3_riscv.o
+LOAD misc_riscv.o
+LOAD ws_memops.o
+LOAD ws_alloc_riscv.o
+LOAD wolfmath_riscv.o
+LOAD F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a
+START GROUP
+LOAD F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a
+LOAD F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libgloss.a
+END GROUP
+LOAD F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a
+                0x00000000                        . = 0x0
+
+.text           0x00000000     0x4be8
+ *(.text.start)
+ .text.start    0x00000000        0xc start.o
+                0x00000000                _start
+ *(.text)
+ .text          0x0000000c        0x0 start.o
+ .text          0x0000000c        0x0 aes_sha3_multi.o
+ .text          0x0000000c        0x0 aes_riscv.o
+ .text          0x0000000c        0x0 sha3_riscv.o
+ .text          0x0000000c        0x0 misc_riscv.o
+ .text          0x0000000c        0x0 ws_memops.o
+ .text          0x0000000c        0x0 ws_alloc_riscv.o
+ .text          0x0000000c        0x0 wolfmath_riscv.o
+ .text          0x0000000c        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .text          0x0000000c        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .text          0x0000000c       0xb4 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+                0x0000000c                __divsi3
+                0x00000014                __udivsi3
+                0x00000014                __hidden___udivsi3
+                0x0000005c                __umodsi3
+                0x00000090                __modsi3
+ .text          0x000000c0        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+ *(.text.*)
+ .text.write_be32
+                0x000000c0       0x3c aes_sha3_multi.o
+ .text.read_be32
+                0x000000fc       0x3c aes_sha3_multi.o
+ .text.do_aes   0x00000138      0x240 aes_sha3_multi.o
+ .text.do_sha3  0x00000378      0x1c0 aes_sha3_multi.o
+ .text.startup.main
+                0x00000538      0x298 aes_sha3_multi.o
+                0x00000538                main
+ .text.col_mul  0x000007d0       0x4c aes_riscv.o
+ .text.aes_safe_byte
+                0x0000081c       0x20 aes_riscv.o
+ .text.IncrementAesCounter
+                0x0000083c       0x90 aes_riscv.o
+ .text.AesEncrypt_C
+                0x000008cc      0x768 aes_riscv.o
+ .text.AesEncrypt_preFetchOpt
+                0x00001034       0x40 aes_riscv.o
+ .text.wc_AesSetIV
+                0x00001074       0x4c aes_riscv.o
+                0x00001074                wc_AesSetIV
+ .text.wc_AesSetKeyLocal.isra.0
+                0x000010c0      0x3e4 aes_riscv.o
+ .text.wc_AesSetKeyDirect
+                0x000014a4       0x18 aes_riscv.o
+                0x000014a4                wc_AesSetKeyDirect
+ .text.wc_AesSetKey
+                0x000014bc       0x18 aes_riscv.o
+                0x000014bc                wc_AesSetKey
+ .text.wc_AesEncryptDirect
+                0x000014d4       0x34 aes_riscv.o
+                0x000014d4                wc_AesEncryptDirect
+ .text.wc_AesCbcEncrypt
+                0x00001508       0xd0 aes_riscv.o
+                0x00001508                wc_AesCbcEncrypt
+ .text.wc_AesCtrSetKey
+                0x000015d8       0x18 aes_riscv.o
+                0x000015d8                wc_AesCtrSetKey
+ .text.wc_AesInit
+                0x000015f0       0x48 aes_riscv.o
+                0x000015f0                wc_AesInit
+ .text.wc_AesNew
+                0x00001638       0x7c aes_riscv.o
+                0x00001638                wc_AesNew
+ .text.wc_AesFree
+                0x000016b4       0x10 aes_riscv.o
+                0x000016b4                wc_AesFree
+ .text.wc_AesDelete
+                0x000016c4       0x50 aes_riscv.o
+                0x000016c4                wc_AesDelete
+ .text.wc_AesGetKeySize
+                0x00001714       0x50 aes_riscv.o
+                0x00001714                wc_AesGetKeySize
+ .text.wc_AesEcbEncrypt
+                0x00001764       0xa0 aes_riscv.o
+                0x00001764                wc_AesEcbEncrypt
+ .text.wc_AesCtrEncrypt
+                0x00001804      0x244 aes_riscv.o
+                0x00001804                wc_AesCtrEncrypt
+ .text.wc_AesCfbEncrypt
+                0x00001a48      0x1a4 aes_riscv.o
+                0x00001a48                wc_AesCfbEncrypt
+ .text.wc_AesCfb1Encrypt
+                0x00001bec      0x160 aes_riscv.o
+                0x00001bec                wc_AesCfb1Encrypt
+ .text.wc_AesCfb8Encrypt
+                0x00001d4c       0xe0 aes_riscv.o
+                0x00001d4c                wc_AesCfb8Encrypt
+ .text.wolfssl_init_aes_tables
+                0x00001e2c      0x364 aes_riscv.o
+                0x00001e2c                wolfssl_init_aes_tables
+ .text.sha3_safe_set_byte
+                0x00002190       0x30 sha3_riscv.o
+ .text.InitSha3.isra.0
+                0x000021c0       0x4c sha3_riscv.o
+ .text.BlockSha3
+                0x0000220c     0x1488 sha3_riscv.o
+                0x0000220c                BlockSha3
+ .text.wc_Sha3Final.constprop.0
+                0x00003694       0xd0 sha3_riscv.o
+ .text.wc_Sha3GetHash.constprop.0
+                0x00003764       0x68 sha3_riscv.o
+ .text.wc_InitSha3_256
+                0x000037cc       0x2c sha3_riscv.o
+                0x000037cc                wc_InitSha3_256
+ .text.wc_Sha3_256_Update
+                0x000037f8      0x170 sha3_riscv.o
+                0x000037f8                wc_Sha3_256_Update
+ .text.wc_Sha3_256_Final
+                0x00003968        0x4 sha3_riscv.o
+                0x00003968                wc_Sha3_256_Final
+ .text.wc_Sha3_256_Free
+                0x0000396c        0x4 sha3_riscv.o
+                0x0000396c                wc_Sha3_256_Free
+ .text.wc_Sha3_256_GetHash
+                0x00003970        0x4 sha3_riscv.o
+                0x00003970                wc_Sha3_256_GetHash
+ .text.wc_Sha3_256_Copy
+                0x00003974       0x3c sha3_riscv.o
+                0x00003974                wc_Sha3_256_Copy
+ .text.wolfssl_init_sha3_tables
+                0x000039b0      0x158 sha3_riscv.o
+                0x000039b0                wolfssl_init_sha3_tables
+ .text.misc_safe_byte
+                0x00003b08       0x1c misc_riscv.o
+ .text.misc_safe_set_byte
+                0x00003b24       0x30 misc_riscv.o
+ .text.rotlFixed
+                0x00003b54       0x14 misc_riscv.o
+                0x00003b54                rotlFixed
+ .text.rotrFixed
+                0x00003b68       0x14 misc_riscv.o
+                0x00003b68                rotrFixed
+ .text.rotlFixed16
+                0x00003b7c       0x24 misc_riscv.o
+                0x00003b7c                rotlFixed16
+ .text.rotrFixed16
+                0x00003ba0       0x24 misc_riscv.o
+                0x00003ba0                rotrFixed16
+ .text.ByteReverseWord32
+                0x00003bc4       0x34 misc_riscv.o
+                0x00003bc4                ByteReverseWord32
+ .text.ByteReverseWords
+                0x00003bf8       0x60 misc_riscv.o
+                0x00003bf8                ByteReverseWords
+ .text.readUnalignedWord16
+                0x00003c58       0x3c misc_riscv.o
+                0x00003c58                readUnalignedWord16
+ .text.writeUnalignedWord16
+                0x00003c94       0x38 misc_riscv.o
+                0x00003c94                writeUnalignedWord16
+ .text.readUnalignedWord32
+                0x00003ccc       0x3c misc_riscv.o
+                0x00003ccc                readUnalignedWord32
+ .text.writeUnalignedWord32
+                0x00003d08       0x38 misc_riscv.o
+                0x00003d08                writeUnalignedWord32
+ .text.readUnalignedWords32
+                0x00003d40       0x34 misc_riscv.o
+                0x00003d40                readUnalignedWords32
+ .text.writeUnalignedWords32
+                0x00003d74       0x34 misc_riscv.o
+                0x00003d74                writeUnalignedWords32
+ .text.readUnalignedWord64
+                0x00003da8       0x50 misc_riscv.o
+                0x00003da8                readUnalignedWord64
+ .text.writeUnalignedWord64
+                0x00003df8       0x44 misc_riscv.o
+                0x00003df8                writeUnalignedWord64
+ .text.readUnalignedWords64
+                0x00003e3c       0x3c misc_riscv.o
+                0x00003e3c                readUnalignedWords64
+ .text.writeUnalignedWords64
+                0x00003e78       0x3c misc_riscv.o
+                0x00003e78                writeUnalignedWords64
+ .text.rotlFixed64
+                0x00003eb4       0x6c misc_riscv.o
+                0x00003eb4                rotlFixed64
+ .text.rotrFixed64
+                0x00003f20       0x6c misc_riscv.o
+                0x00003f20                rotrFixed64
+ .text.ByteReverseWord64
+                0x00003f8c       0x34 misc_riscv.o
+                0x00003f8c                ByteReverseWord64
+ .text.ByteReverseWords64
+                0x00003fc0       0x6c misc_riscv.o
+                0x00003fc0                ByteReverseWords64
+ .text.XorWordsOut
+                0x0000402c       0x4c misc_riscv.o
+                0x0000402c                XorWordsOut
+ .text.xorbufout
+                0x00004078      0x148 misc_riscv.o
+                0x00004078                xorbufout
+ .text.XorWords
+                0x000041c0       0x40 misc_riscv.o
+                0x000041c0                XorWords
+ .text.xorbuf   0x00004200      0x11c misc_riscv.o
+                0x00004200                xorbuf
+ .text.ForceZero
+                0x0000431c       0x98 misc_riscv.o
+                0x0000431c                ForceZero
+ .text.ConstantCompare
+                0x000043b4       0x34 misc_riscv.o
+                0x000043b4                ConstantCompare
+ .text.ctMaskGT
+                0x000043e8       0x18 misc_riscv.o
+                0x000043e8                ctMaskGT
+ .text.ctMaskGTE
+                0x00004400       0x14 misc_riscv.o
+                0x00004400                ctMaskGTE
+ .text.ctMaskIntGTE
+                0x00004414       0x10 misc_riscv.o
+                0x00004414                ctMaskIntGTE
+ .text.ctMaskWord32GTE
+                0x00004424       0x10 misc_riscv.o
+                0x00004424                ctMaskWord32GTE
+ .text.ctMaskLT
+                0x00004434       0x18 misc_riscv.o
+                0x00004434                ctMaskLT
+ .text.ctMaskLTE
+                0x0000444c       0x14 misc_riscv.o
+                0x0000444c                ctMaskLTE
+ .text.ctMaskEq
+                0x00004460       0x30 misc_riscv.o
+                0x00004460                ctMaskEq
+ .text.ctMask16GT
+                0x00004490       0x1c misc_riscv.o
+                0x00004490                ctMask16GT
+ .text.ctMask16GTE
+                0x000044ac       0x18 misc_riscv.o
+                0x000044ac                ctMask16GTE
+ .text.ctMask16LT
+                0x000044c4       0x1c misc_riscv.o
+                0x000044c4                ctMask16LT
+ .text.ctMask16LTE
+                0x000044e0       0x18 misc_riscv.o
+                0x000044e0                ctMask16LTE
+ .text.ctMask16Eq
+                0x000044f8       0x34 misc_riscv.o
+                0x000044f8                ctMask16Eq
+ .text.ctMaskNotEq
+                0x0000452c       0x2c misc_riscv.o
+                0x0000452c                ctMaskNotEq
+ .text.ctMaskSel
+                0x00004558       0x10 misc_riscv.o
+                0x00004558                ctMaskSel
+ .text.ctMaskSelInt
+                0x00004568       0x18 misc_riscv.o
+                0x00004568                ctMaskSelInt
+ .text.ctMaskSelWord32
+                0x00004580       0x1c misc_riscv.o
+                0x00004580                ctMaskSelWord32
+ .text.ctSetLTE
+                0x0000459c       0x10 misc_riscv.o
+                0x0000459c                ctSetLTE
+ .text.ctMaskCopy
+                0x000045ac       0x34 misc_riscv.o
+                0x000045ac                ctMaskCopy
+ .text.min      0x000045e0       0x34 misc_riscv.o
+                0x000045e0                min
+ .text.max      0x00004614       0x34 misc_riscv.o
+                0x00004614                max
+ .text.c32to24  0x00004648       0x18 misc_riscv.o
+                0x00004648                c32to24
+ .text.c16toa   0x00004660       0x10 misc_riscv.o
+                0x00004660                c16toa
+ .text.c32toa   0x00004670       0x24 misc_riscv.o
+                0x00004670                c32toa
+ .text.c24to32  0x00004694       0x24 misc_riscv.o
+                0x00004694                c24to32
+ .text.ato24    0x000046b8        0x4 misc_riscv.o
+                0x000046b8                ato24
+ .text.ato16    0x000046bc       0x24 misc_riscv.o
+                0x000046bc                ato16
+ .text.ato32    0x000046e0       0x28 misc_riscv.o
+                0x000046e0                ato32
+ .text.ato32le  0x00004708       0x30 misc_riscv.o
+                0x00004708                ato32le
+ .text.btoi     0x00004738        0x8 misc_riscv.o
+                0x00004738                btoi
+ .text.HexCharToByte
+                0x00004740       0x54 misc_riscv.o
+                0x00004740                HexCharToByte
+ .text.ByteToHex
+                0x00004794       0x1c misc_riscv.o
+                0x00004794                ByteToHex
+ .text.ByteToHexStr
+                0x000047b0       0x54 misc_riscv.o
+                0x000047b0                ByteToHexStr
+ .text.CharIsWhiteSpace
+                0x00004804       0x58 misc_riscv.o
+                0x00004804                CharIsWhiteSpace
+ .text.CopyString
+                0x0000485c       0x74 misc_riscv.o
+                0x0000485c                CopyString
+ .text.safe_put
+                0x000048d0       0x30 ws_memops.o
+ .text.memcpy   0x00004900       0xa0 ws_memops.o
+                0x00004900                memcpy
+ .text.memset   0x000049a0       0x9c ws_memops.o
+                0x000049a0                memset
+ .text.ws_malloc
+                0x00004a3c       0x38 ws_alloc_riscv.o
+                0x00004a3c                ws_malloc
+ .text.ws_free  0x00004a74        0x4 ws_alloc_riscv.o
+                0x00004a74                ws_free
+ .text.mp_reverse
+                0x00004a78       0x38 wolfmath_riscv.o
+                0x00004a78                mp_reverse
+ .text.mp_get_digit_count
+                0x00004ab0        0xc wolfmath_riscv.o
+                0x00004ab0                mp_get_digit_count
+ .text.mp_get_digit
+                0x00004abc       0x30 wolfmath_riscv.o
+                0x00004abc                mp_get_digit
+ .text.__lshrdi3
+                0x00004aec       0x38 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+                0x00004aec                __lshrdi3
+ .text.__ashldi3
+                0x00004b24       0x38 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+                0x00004b24                __ashldi3
+ .text.strlen   0x00004b5c       0x8c F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+                0x00004b5c                strlen
+
+.rodata
+ *(.rodata)
+ *(.rodata.*)
+
+.data           0x00004be8        0x0
+ *(.data)
+ .data          0x00004be8        0x0 start.o
+ .data          0x00004be8        0x0 aes_sha3_multi.o
+ .data          0x00004be8        0x0 aes_riscv.o
+ .data          0x00004be8        0x0 sha3_riscv.o
+ .data          0x00004be8        0x0 misc_riscv.o
+ .data          0x00004be8        0x0 ws_memops.o
+ .data          0x00004be8        0x0 ws_alloc_riscv.o
+ .data          0x00004be8        0x0 wolfmath_riscv.o
+ .data          0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .data          0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .data          0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+ .data          0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+ *(.data.*)
+
+.bss            0x00004be8      0x788
+ *(.bss)
+ .bss           0x00004be8        0x0 start.o
+ .bss           0x00004be8        0x0 aes_sha3_multi.o
+ .bss           0x00004be8        0x0 aes_riscv.o
+ .bss           0x00004be8        0x0 sha3_riscv.o
+ .bss           0x00004be8        0x0 misc_riscv.o
+ .bss           0x00004be8        0x0 ws_memops.o
+ .bss           0x00004be8        0x0 ws_alloc_riscv.o
+ .bss           0x00004be8        0x0 wolfmath_riscv.o
+ .bss           0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .bss           0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .bss           0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+ .bss           0x00004be8        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+ *(.bss.*)
+ .bss.digest.0  0x00004be8       0x20 aes_sha3_multi.o
+ .bss.sha3.1    0x00004c08      0x198 aes_sha3_multi.o
+ .bss.g_ct      0x00004da0       0x10 aes_sha3_multi.o
+ .bss.g_pt      0x00004db0       0x10 aes_sha3_multi.o
+ .bss.g_iv      0x00004dc0       0x10 aes_sha3_multi.o
+ .bss.g_key     0x00004dd0       0x10 aes_sha3_multi.o
+ .bss.g_aes     0x00004de0      0x120 aes_sha3_multi.o
+ .bss.g_chunk   0x00004f00       0x88 aes_sha3_multi.o
+ .bss.Tsbox     0x00004f88      0x100 aes_riscv.o
+ .bss.rcon      0x00005088       0x28 aes_riscv.o
+ .bss.hash_keccak_r
+                0x000050b0       0xc0 sha3_riscv.o
+ .bss.heap_pool
+                0x00005170      0x200 ws_alloc_riscv.o
+OUTPUT(aes_sha3_multi_nogc.elf elf32-littleriscv)
+
+.sbss.always_prefetch
+                0x00005370        0x4
+ .sbss.always_prefetch
+                0x00005370        0x4 aes_riscv.o
+
+.sbss.heap_off  0x00005374        0x4
+ .sbss.heap_off
+                0x00005374        0x4 ws_alloc_riscv.o
+
+.riscv.attributes
+                0x00000000       0x1c
+ .riscv.attributes
+                0x00000000       0x1a start.o
+ .riscv.attributes
+                0x0000001a       0x1c aes_sha3_multi.o
+ .riscv.attributes
+                0x00000036       0x1c aes_riscv.o
+ .riscv.attributes
+                0x00000052       0x1c sha3_riscv.o
+ .riscv.attributes
+                0x0000006e       0x1c misc_riscv.o
+ .riscv.attributes
+                0x0000008a       0x1c ws_memops.o
+ .riscv.attributes
+                0x000000a6       0x1c ws_alloc_riscv.o
+ .riscv.attributes
+                0x000000c2       0x1c wolfmath_riscv.o
+ .riscv.attributes
+                0x000000de       0x1c F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .riscv.attributes
+                0x000000fa       0x1c F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .riscv.attributes
+                0x00000116       0x1a F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+ .riscv.attributes
+                0x00000130       0x1c F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+
+.comment        0x00000000       0x33
+ .comment       0x00000000       0x33 aes_sha3_multi.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 aes_riscv.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 sha3_riscv.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 misc_riscv.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 ws_memops.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 ws_alloc_riscv.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 wolfmath_riscv.o
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+                                 0x34 (size before relaxing)
+ .comment       0x00000033        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+                                 0x34 (size before relaxing)
+
+.note.GNU-stack
+                0x00000000        0x0
+ .note.GNU-stack
+                0x00000000        0x0 aes_sha3_multi.o
+ .note.GNU-stack
+                0x00000000        0x0 aes_riscv.o
+ .note.GNU-stack
+                0x00000000        0x0 sha3_riscv.o
+ .note.GNU-stack
+                0x00000000        0x0 misc_riscv.o
+ .note.GNU-stack
+                0x00000000        0x0 ws_memops.o
+ .note.GNU-stack
+                0x00000000        0x0 ws_alloc_riscv.o
+ .note.GNU-stack
+                0x00000000        0x0 wolfmath_riscv.o
+ .note.GNU-stack
+                0x00000000        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .note.GNU-stack
+                0x00000000        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .note.GNU-stack
+                0x00000000        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/../../../../riscv-none-elf/lib/rv32i/ilp32\libc.a(libc_a-strlen.o)
+
+.debug_info     0x00000000      0x3ed
+ .debug_info    0x00000000      0x1c7 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_info    0x000001c7      0x1c7 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .debug_info    0x0000038e       0x5f F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+
+.debug_abbrev   0x00000000      0x25a
+ .debug_abbrev  0x00000000      0x119 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_abbrev  0x00000119      0x119 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .debug_abbrev  0x00000232       0x28 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+
+.debug_loclists
+                0x00000000      0x134
+ .debug_loclists
+                0x00000000       0x9a F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_loclists
+                0x0000009a       0x9a F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+
+.debug_aranges  0x00000000       0x60
+ .debug_aranges
+                0x00000000       0x20 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_aranges
+                0x00000020       0x20 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .debug_aranges
+                0x00000040       0x20 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+
+.debug_rnglists
+                0x00000000       0x3e
+ .debug_rnglists
+                0x00000000       0x1f F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_rnglists
+                0x0000001f       0x1f F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+
+.debug_line     0x00000000      0x323
+ .debug_line    0x00000000       0xe5 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_line    0x000000e5       0xeb F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+ .debug_line    0x000001d0      0x153 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+
+.debug_str      0x00000000      0x37a
+ .debug_str     0x00000000      0x37a F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+                                0x20c (size before relaxing)
+ .debug_str     0x0000037a        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+                                0x20c (size before relaxing)
+ .debug_str     0x0000037a        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+                                0x1d0 (size before relaxing)
+
+.debug_line_str
+                0x00000000      0x2d5
+ .debug_line_str
+                0x00000000      0x2d5 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+                                0x231 (size before relaxing)
+ .debug_line_str
+                0x000002d5        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)
+                                0x231 (size before relaxing)
+ .debug_line_str
+                0x000002d5        0x0 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(div.o)
+                                0x18b (size before relaxing)
+
+.debug_frame    0x00000000       0x40
+ .debug_frame   0x00000000       0x20 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_lshrdi3.o)
+ .debug_frame   0x00000020       0x20 F:/xpack-riscv-none-elf-gcc-15.2.0-1/bin/../lib/gcc/riscv-none-elf/15.2.0/rv32i/ilp32\libgcc.a(_ashldi3.o)

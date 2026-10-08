@@ -1,0 +1,28 @@
+
+****** xsim v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Tue Aug 18 16:08:04 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_multi_ibex1/xsim_script.tcl
+# xsim {tb_multi_ibex1} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+[704681 cyc] DONE (Ibex).
+===> TAT CA PASS (Ibex, AES 4 mode + SHA3 3 kich thuoc)
+---- PURE cycles (START -> ket qua CUOI) ----
+AES-ECB PURE = 9844
+AES-CBC PURE = 10364
+AES-CFB PURE = 10403
+AES-CTR PURE = 10643
+SHA3-1blk  PURE = 39415
+SHA3-4blk  PURE = 127969
+SHA3-16blk PURE = 482185
+$finish called at time : 17617112500 ps : File "F:/RISSP_cORE/firmware_SW_Crypto/wolfssl_build/tb_isolate_multi_ibex.v" Line 133
+run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:30 . Memory (MB): peak = 195.117 ; gain = 0.000
+exit
+INFO: xsimkernel Simulation Memory Usage: 31828 KB (Peak: 31828 KB), Simulation CPU Usage: 31186 ms
+INFO: [Common 17-206] Exiting xsim at Tue Aug 18 16:08:36 2026...

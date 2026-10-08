@@ -1,0 +1,368 @@
+\begin{abstract}
+
+The rapid proliferation of IoT edge applications demands compact, energy-efficient SoCs capable of operating under strict constraints. To avoid the hardware overhead of conventional cryptographic ISA or pipeline extensions, this paper presents a RISP-based SoC framework integrating a minimalist single-cycle processor core with dedicated AES, $\text{SHA}3$, and RSA cryptographic engines via an $\text{AXI}4\text{-}\text{Lite}$ interface. Implemented on a Xilinx $\text{Zynq}\text{-}\text{7000}$ FPGA, the RISP core minimizes control logic to just $1,126\text{ }\text{LUTs}$ and $175\text{ }\text{FFs}$. Benchmarked against $\text{RV}32\text{I}$ and Ibex baselines, the RISP-based SoC reduces total power to $0.407\text{ }\text{W}$ ($0.298\text{ }\text{W}$ dynamic) and drastically cuts cycle counts across all cryptographic workloads. Specifically, it achieves $58.18 Mb/s$ in $\text{AES}\text{-}128$ ECB mode ($88\text{ }\text{cycles}$), completes 16-block $\text{SHA}3\text{-}256$ in $6,871\text{ }\text{cycles}$, and delivers $3265.89\text{ }\mu\text{J/bit}$ energy efficiency with $306.19$ verifications per second per Watt ($\text{verifications} \cdot \text{s}^{-1} \cdot \text{W}^{-1}$) for $\text{RSA}\text{-}2048$. The proposed architecture provides an optimal hardware offloading paradigm for energy-constrained secure edge computing.
+
+\end{abstract}
+
+
+\begin{IEEEkeywords}
+RISC-V, RISP, Cryptographic Hardware, Secure Edge, RISP-Based SoC.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\label{sec:intro}
+
+The rapid expansion of edge IoT applications necessitates hardware-assisted security under strict power, area, and cost constraints \cite{wang2021energy}, while conventional RISC-V instruction-set extensions and tightly coupled coprocessors introduce control complexity and hardware overhead that challenge scalability \cite{wang2021energy, pham2026sha, pham2024secure, ignatius2024power}.
+
+To address these challenges, this paper proposes a minimalist SoC framework centered on a single-cycle Instruction-Subset Processor (RISP) coordinating AES, $\text{SHA}3$, and RSA engines via an $\text{AXI}4\text{-}\text{Lite}$ interface \cite{raissp2025}, completely decoupling system control from cryptographic computation to eliminate pipeline complexity and optimize silicon resource utilization.
+
+This research makes two primary contributions:
+
+\begin{enumerate}
+    \item The RISP methodology is instantiated for memory-mapped cryptographic workloads by deriving an optimized instruction subset tailored to the target firmware.
+
+    \item The framework is evaluated against a baseline SoC featuring a five-stage pipelined $\text{RV}32\text{I}$MB core under identical conditions.
+\end{enumerate}
+
+The remainder of this paper is organized as follows: Section \ref{sec:related} reviews literature on domain-specific processors and cryptographic integration; Section \ref{sec:system} details the proposed RISP-based SoC architecture and accelerator designs; Section \ref{sec:result} presents FPGA implementation results and performance comparisons; and Section \ref{sec:Conclusion} concludes the work and outlines future directions for edge IoT security.
+
+\section{Related work}
+\label{sec:related}
+
+ISA-level research focuses on scalar cryptographic instructions and custom Instruction Set Extensions (ISE) to reduce program memory and deliver speedups of $1.5\times$ to $8.6\times$ \cite{cheng2023risc, marshall2021design, pham2026sha, pham2024secure, ignatius2024power, nicsanci2022symmetric}; however, integrating cryptographic logic directly into the processor data-path increases control complexity and can negatively impact the core's critical path and maximum frequency \cite{pham2024secure, ignatius2024power}.
+
+While coprocessors and stand-alone accelerators (such as RoCC-integrated AES and high-throughput communication crypto engines) achieve massive performance gains \cite{gomes2022fac, pham2026sha, nannipieri2021risc, nicsanci2022symmetric, ma2023design, wang2021energy}, they often retain full-featured pipelined host processors that impose unnecessary resource overhead for extreme-edge controllers \cite{simola2024risc, cheng2023risc, ma2023design, gomes2022fac}.
+
+Memory-mapped integration via $\text{AXI}4\text{-}\text{Lite}$ or AXI-Stream allows modular, independent accelerator verification \cite{axinte2025embedded, simola2024risc, nasahl2021hector}, while Instruction-Subset Processor (RISP) methodologies generate application-specific single-cycle cores that reduce area by $8\%$ to $43\%$ and power by $3\%$ to $30\%$ compared to full-ISA processors \cite{raissp2025}, providing the foundation for our pairing of a minimalist RISP host with memory-mapped AES, $\text{SHA}3$, and RSA accelerators.
+
+\section{Proposed RISP-Based SoC Architecture}
+\label{sec:system}
+
+The proposed SoC pairs a minimalist RISP host with AES, $\text{SHA}3$, and RSA engines via an interconnect, decoupling control from security logic for edge efficiency \cite{raissp2025}.
+
+\subsection{System Overview and Memory-Mapped Integration}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/SoC/RISP-SOC.png}
+    \caption{Overall architecture of the RISP-based SoC and internal processor microarchitecture.}
+    \label{fig:risp_soc}
+\end{figure}
+
+The SoC utilizes an $\text{AXI}4\text{-}\text{Lite}$ interconnect for low-latency communication between the RISP host and memory-mapped cryptographic accelerators \cite{gomes2022fac}, offloading intensive computations to reduce host duty cycles \cite{ma2023design}. Fig.~\ref{fig:risp_soc} illustrates the architectural framework, featuring the main CPU host coordinated via an interconnect with AES, $\text{SHA}3$, and RSA accelerators, an on-chip memory hierarchy, standard I/O interfaces \cite{hoang2020low}, and a DMA controller.
+
+\subsection{Minimalist RISP Host Core}
+
+As illustrated in Fig.~\ref{fig:risp_soc}, the single-cycle, non-pipelined RISP host executes only the instruction subset required for firmware, minimizing pipeline overhead, TCB, and logic resources to provide a verified root-of-control \cite{raissp2025}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Instructions retained and omitted in the RISP host}
+    \label{tab:instruction_types}
+    % Thiết lập bảng chiếm 50% độ rộng dòng văn bản
+    \begin{tabularx}{0.5\textwidth}{l X X}
+        \toprule
+        \textbf{Type} & \textbf{Retained Instructions} & \textbf{Omitted Instruction}\\
+        \midrule
+        B-type & BEQ, BLT & BNE, BGE, BLTU, BGEU \\
+        R-type & XOR & ADD, SUB, AND, OR, SLL, SRL, SRA, SLT, SLTU \\
+        I-type & ADDI, ANDI & SLTI, SLTIU, XORI, ORI, SLLI, SRLI, SRAI \\
+        Loads & LW & LB, LBU, LH, LHU \\
+        Stores & SW & SB, SH \\
+        U-Types & LUI & AUIPC \\
+        Jump & JAL & JALR \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Table~\ref{tab:instruction_types} details the workload-specific RISP instructions grouped by format, satisfying the set-completeness criterion:
+\begin{equation}
+\mathcal{I}_{req} \subseteq \mathcal{I}_{impl} \quad \text{and} \quad \mathcal{I}_{omit} \cap \mathcal{I}_{req} = \emptyset,
+\end{equation}
+where $\mathcal{I}_{req}$, $\mathcal{I}_{impl}$, and $\mathcal{I}_{omit}$ denote required, implemented, and omitted instructions, respectively. By retaining essential instructions that prioritize word-aligned access and integer arithmetic, while omitting redundant opcodes, the design significantly reduces sequential logic and control complexity compared to general-purpose baselines.
+
+\subsection{AES Accelerator Architecture}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/crypto/AES_BD.png}
+    \caption{Block diagram of the $\text{AES}\text{-}128$ datapath core and top-level control logic.}
+    \label{fig:aes_bd}
+\end{figure}
+
+To ensure confidentiality with minimal area, the rolled AES engine employs composite field S-boxes and interfaces with the RISP host via $128\text{-}\text{bit}$ memory-mapped registers \cite{ignatius2024power, simola2024risc}. As depicted in Fig.~\ref{fig:aes_bd}, memory-mapped CSRs and staging registers manage inputs before mode logic routes blocks through cipher modes (ECB, CBC, CTR, CFB) into the core engine, concluding with status flags and ciphertext storage \cite{simola2024risc}.
+
+Let $\mathcal{E}_K(\cdot)$ denote the $128-\text{bit}$ AES encryption under key $K$, where $P_i$ and $C_i$ are the $i\text{-}\text{th}$ plaintext and ciphertext blocks ($i \ge 1$).
+Let $IV$ be the initialization vector, $T_i$ the counter state, and $\oplus$ the bitwise XOR.
+The formulas for the five supported modes are:
+
+\begin{align}
+    C_i &= \mathcal{E}_K(P_i) && \text{(ECB)} \\
+    C_i &= \mathcal{E}_K(P_i \oplus C_{i-1}), \; C_0 = IV && \text{(CBC)} \\
+    C_i &= P_i \oplus \mathcal{E}_K(T_i), \; T_i = T_0 + i - 1 && \text{(CTR)} \\
+    C_i &= P_i \oplus \mathcal{E}_K(C_{i-1}), \; C_0 = IV && \text{(CFB)}
+\end{align}
+
+\subsection{$\text{SHA}3$ Accelerator Architecture}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/crypto/SHA3-BD.png}
+    \caption{High-level architecture and F-permutation processing pipeline of the $\text{SHA}3$ accelerator.}
+    \label{fig:sha3_bd}
+\end{figure}
+
+The multimode $\text{SHA}3$ engine provides integrity via a sponge construction and configurable buffers \cite{huynh2024multimode}. As illustrated in Fig.~\ref{fig:sha3_bd}, an input controller handles handshaking \cite{huynh2024multimode}, a padder formats $1088-\text{bit}\text{ }\text{blocks}$ \cite{ma2023design}, and an internal $F_{\text{permutation}}$ engine executes $24\text{}\text{Keccak}\text{-}\text{f}$ rounds over a $1600\text{-}\text{bit}$ state before output extraction \cite{huynh2024multimode, ma2023design}.
+
+Let $M$ be the input message, padded into blocks $m_i$ of size $r = 1088$ bits. The internal state $S$ is initialized to a $1600\text{-}\text{bit}$ zero array. The sponge operation and $5\text{-}\text{step}$ round permutation ($\theta, \rho, \pi, \chi, \iota$) are formulated as:
+
+\begin{align}
+    \text{Padding:} \quad & S^{(0)} = 0^{1600}, \quad m_i = \text{Pad}(M) \\
+    \text{Absorbing:} \quad & S^{(i)} = \mathcal{F}\left(S^{(i-1)} \oplus (m_i \parallel 0^{1600-r})\right) \\
+    \text{Permutation:} \quad & \mathcal{F} = \iota \circ \chi \circ \pi \circ \rho \circ \theta \\
+    \text{Squeezing:} \quad & Z_i = \text{Truncate}_d(S^{(i)})
+\end{align}
+
+\subsection{RSA-Oriented Modular Arithmetic Engine}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/crypto/RSA-BD.png}
+    \caption{RSA cryptographic accelerator architecture featuring a Montgomery multiplication core.}
+    \label{fig:rsa_bd}
+\end{figure}
+
+A dedicated modular arithmetic engine supports RSA and ECC primitives using a word-serial Montgomery multiplier for compact, high-precision finite field calculations \cite{wang2021energy}, decoupling long-latency modular exponentiation from the host RISP to mitigate side-channel vulnerabilities and ensure consistent performance. As illustrated in Fig.~\ref{fig:rsa_bd}, an FSM controller and input staging module coordinate parameters—such as plaintext $M$, modulus $N$, and Montgomery constants—routing them via multiplexers to execute modular exponentiation \cite{wang2021energy}.
+
+A modular arithmetic engine accelerates RSA/ECC primitives via a word-serial Montgomery multiplier \cite{wang2021energy}. As shown in Fig.~\ref{fig:rsa_bd}, an FSM controller manages staging registers to process operands ($M$, $N$) and execute exponentiation \cite{wang2021energy}.
+
+\begin{align}
+    \text{Domain Conversion:} \quad & \bar{A} = A \cdot R \pmod N \\
+    \text{Montgomery Mul:} \quad & \text{MonMul}(\bar{A}, \bar{B}) = \bar{A}\bar{B}R^{-1} \pmod N \\
+    \text{Exponentiation:} \quad & C = M^d \pmod N
+\end{align}
+
+\subsection{Hardware-Software Control Flow}
+
+\begin{figure}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/sequence/firmware_sq.png}
+    \caption{Control and data exchange protocol between software and memory-mapped cryptographic hardware.}
+    \label{fig:fw_sq}
+\end{figure}
+
+A lightweight register interface coordinates firmware and accelerators \cite{ma2023design}. As detailed in Fig.~\ref{fig:fw_sq}, the firmware requests operations, and the RISP host writes operands via memory-mapped transactions before asserting a CSR $'\text{start}'$ trigger to initiate hardware execution \cite{gomes2022fac, simola2024risc}; upon completion, a $'\text{done}'$ flag or interrupt notifies the host to retrieve and return results to the application layer \cite{gomes2022fac}.
+
+\section{Experimental Evaluation and Results}
+\label{sec:result}
+
+\begin{figure*}[!t]
+    \centering
+    \includegraphics[width=1\linewidth]{image/evaluation/evaluated_soc.png}
+    \caption{Vivado block diagram of the proposed SoC architecture.}
+    \label{fig:result_soc}
+\end{figure*}
+
+This section evaluates the RISP-based SoC against $\text{RV}32\text{I}$ and Ibex baselines on a Xilinx $\text{Zynq}\text{-}\text{7000}$ FPGA at $40\text{ }\text{MHz}$ via $\text{AXI}4\text{-}\text{Lite}$. Fig.~\ref{fig:result_soc} illustrates the SoC block diagram, featuring the RISP host integrated with AES, $\text{SHA}3$, and RSA accelerators via an AXI interconnect.
+
+\subsection{System-Level Resource Utilization}
+
+\begin{table}[!t]
+\centering
+\caption{Hardware Resource and Performance Metrics}
+\label{tab:hw_metrics_full}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{RISP-Based SoC} & \textbf{$\text{RV}32\text{I}$-Based SoC~\cite{harris2021digital}} & \textbf{Ibex-Based SoC~\cite{gallmann2021swift}} \\
+\midrule
+CLB LUTs & $17,180$ & $17,632$ & $18,484$ \\
+CLB FFs & $24,748$ & $26,233$ & $26,401$ \\
+DSP Slices & $4$ & $4$ & $4$ \\
+Core LUTs & $1,126$ & $1,584$ & $2,437$ \\
+Core FFs & $175$ & $1,663$ & $1,841$ \\
+Dyn. Power (W) & $0.298$ & $0.328$ & $0.336$ \\
+Stat. Power (W) & $0.109$ & $0.110$ & $0.110$ \\
+Total Power (W) & $0.407$ & $0.438$ & $0.446$ \\
+WNS (ns) & $5.308$ & $5.249$ & $7.308$ \\
+Freq. (MHz) & $50.78$ & $50.63$ & $56.50$ \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{1pt}
+\raggedright
+\footnotesize\textit{Note: FFs = Flip-Flops; Dyn. = Dynamic; Stat. = Static; WNS = Worst Negative Slack; Freq. = Single-run slack-based frequency estimate.}
+\end{table}
+
+As summarized in Table \ref{tab:hw_metrics_full}, the proposed RISP-based SoC achieves a significantly compact and energy-efficient hardware footprint compared to standard $\text{RV}32\text{I}$ and Ibex baselines, making it exceptionally well-suited for resource-constrained edge IoT devices. Specifically, the minimalist RISP core utilizes merely $1,126$ $LUTs$ and $175$ Flip-Flops, representing a dramatic reduction in core logic complexity relative to the $\text{RV}32\text{I}$ ($1,584$ $LUTs$, $1,663$ $FFs$) and Ibex ($2,437$ LUTs, $1,841$ $FFs$) architectures. Furthermore, the system successfully lowers total power consumption to $0.407 W$ (with a dynamic power of just $0.298 W$), outperforming both baseline platforms while maintaining a robust operating frequency of $50.78 MHz$ and a positive worst negative slack (WNS) of $5.308 ns$. These characteristics demonstrate an optimal balance between low-power operation and hardware compactness tailored for secure edge computing environments.
+
+\subsection{AES and $\text{SHA}3$ Accelerator Evaluation}
+
+\begin{table}[!t]
+\centering
+\caption{Functional Verification Vectors for $\text{AES}\text{-}128$ Modes}
+\label{tab:aes_functional_full}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}p{2.4cm}}
+\toprule
+\textbf{Mode} & \textbf{Input} & \textbf{IV / Counter} & \textbf{Expected Ciphertext} & \textbf{Observed Ciphertext} \\
+\midrule
+\textbf{ECB} & \texttt{$00112233$ \newline $44556677$ \newline $8899aabb$ \newline $ccddeeff$} & -- & \texttt{$69c4e0d8$ \newline $6a7b0430$ \newline $d8cdb780$ \newline $70b4c55a$} & \texttt{$69c4e0d8$ \newline $6a7b0430$ \newline $d8cdb780$ \newline $70b4c55a$} \\
+\midrule
+\textbf{CBC} & \texttt{$30c81c46$ \newline $a35ce411$ \newline $e5fbc119$ \newline $1a0a52ef$} & \texttt{$5086cb9b$ \newline $507219ee$ \newline $95db113a$ \newline $917678b2$} & \texttt{$73bed6b8$ \newline $e3c1743b$ \newline $7116e69e$ \newline $22229516$} & \texttt{$73bed6b8$ \newline $e3c1743b$ \newline $7116e69e$ \newline $22229516$} \\
+\midrule
+\textbf{CTR} & \texttt{$30c81c46$ \newline $a35ce411$ \newline $e5fbc119$ \newline $1a0a52ef$} & \texttt{$f0f1f2f3$ \newline $f4f5f6f7$ \newline $f8f9fafb$ \newline $fcfdff01$} & \texttt{$5ae4df3e$ \newline $dbd5d35e$ \newline $5b4f0902$ \newline $0db03eab$} & \texttt{$5ae4df3e$ \newline $dbd5d35e$ \newline $5b4f0902$ \newline $0db03eab$} \\
+\midrule
+\textbf{CFB} & \texttt{$f69f2445$ \newline $df4f9b17$ \newline $ad2b417b$ \newline $e66c3710$} & \texttt{$26751f67$ \newline $a3cbb140$ \newline $b1808cf1$ \newline $87a4f4df$} & \texttt{$c04b0535$ \newline $7c5d1c0e$ \newline $eac4c66f$ \newline $9ff7f2e6$} & \texttt{$c04b0535$ \newline $7c5d1c0e$ \newline $eac4c66f$ \newline $9ff7f2e6$} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+\raggedright
+\footnotesize\textit{Note: Complete $128-\text{bit}$ input, IV, counter, and ciphertexts for AES modes.}
+\end{table}
+
+\begin{table}[!t]
+\centering
+\caption{Functional Verification Vectors for $\text{SHA}3\text{-}256$}
+\label{tab:sha3_functional_full}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{c|c|>{\raggedright\arraybackslash}p{3.2cm}|>{\raggedright\arraybackslash}p{3.2cm}}
+\toprule
+\textbf{N blocks} & \textbf{Message (Bytes)} & \textbf{Message Summary (Hex)} & \textbf{Output Hash (Hex)} \\
+\midrule
+$1$ & $128$ & \texttt{$6bc1bee2$ $2e409f96$ \newline $e93d7e11$ $7393172a$ $...$} & \texttt{$d1985c30$ $73f0ff34$ \newline $c1717893$ $0e28f04e$ $...$} \\
+\midrule
+$4$ & $536$ & \texttt{$6bc1bee2$ $2e409f96$ \newline $6bc1bee3$ $2e409f97$ $...$} & \texttt{$7df3d9cd$ $8212808e$ \newline $b2a3ac20$ $38893a49$ $...$} \\
+\midrule
+$16$ & $2168$ & \texttt{$6bc1bee2$ $2e409f96$ \newline $6bc1bee3$ $2e409f97$ $...$} & \texttt{$c14e1d9a$ $4b135dc8$ \newline $b88f8272$ $0d4088bb$ $...$} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+\raggedright
+\footnotesize\textit{Note: Variable-length message blocks and output hashes.}
+\end{table}
+
+To validate the correctness of the proposed cryptographic accelerators, extensive functional verification was conducted using standard NIST test vectors across multiple operational modes and message lengths. As detailed in Fig.~\ref{tab:aes_functional_full} and Fig.~\ref{tab:sha3_functional_full}, the $\text{AES}\text{-}128$ engine successfully processes blocks across Electronic Codebook (ECB), Cipher Block Chaining (CBC), Counter (CTR), and Cipher Feedback (CFB) modes with matching expected and observed ciphertexts, while the $\text{SHA}3\text{-}256$ accelerator efficiently handles variable-length message loads ranging from $1$ to $16$ blocks ($128$ to $2168$ bytes) to produce compliant hash outputs.
+
+\begin{table}[!t]
+\centering
+\caption{$\text{AES}\text{-}128$ and $\text{SHA}3$ Performance Comparison}
+\label{tab:crypto_perf}
+\small
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Engine} & \textbf{Mode/Load} & \textbf{RISP} & \textbf{$\text{RV}32\text{I}$~\cite{harris2021digital}} & \textbf{Ibex~\cite{gallmann2021swift}} \\
+\midrule
+\multirow{2}{*}{AES} & ECB (Mb/s) & $58.18$ & $55.05$ & $56.89$ \\
+                     & ECB (nJ/b) & $7.00$ & $7.95$ & $7.84$ \\
+                     & non-ECB (Mb/s) & $41.29$ & $39.69$ & $40.63$ \\
+                     & non-ECB (nJ/b) & $9.85$ & $11.03$ & $10.97$ \\
+\midrule
+\multirow{2}{*}{$\text{SHA}3$} & $1\text{-}\text{block}$ (Mb/s) & $83.25$ & $81.92$ & $82.58$ \\
+                       & $16\text{-}\text{block}$ (Mb/s/W) & $248.08$ & $213.5*$ & $209.7*$ \\
+\bottomrule
+\end{tabular}
+\vspace{1pt}
+\raggedright
+\footnotesize\textit{Note: Mb/s = Megabits per second; nJ/b = Nanojoules per bit; Mb/s/W = Throughput per watt; ECB = Electronic Codebook mode; Non-ECB = CBC/CTR/CFB modes. *Values derived from comparative baseline analysis.}
+\end{table}
+
+Table \ref{tab:crypto_perf} presents the performance and energy efficiency evaluation of the cryptographic engines integrated into the RISP-based SoC compared to $\text{RV}32\text{I}$ and Ibex baselines. For $\text{AES}\text{-}128$, the proposed architecture achieves a superior throughput of $58.18\text{ Mb/s}$ in Electronic Codebook (ECB) mode and $41.29\text{ Mb/s}$ in Non-ECB (CBC/CTR/CFB) modes, outperforming both baseline processors while maintaining lower energy consumption of $7.00\text{ nJ/b}$ (ECB) and $9.85\text{nJ/b}$ (Non-ECB). Furthermore, for $\text{SHA}3\text{-}256$ workloads, the core delivers an optimized 1-block throughput of $83.25\text{ Mb/s}$, demonstrating robust hardware acceleration capabilities tailored for secure edge computing.
+
+\subsection{RSA Asymmetric Performance}
+
+\begin{table}[!t]
+\centering
+\caption{Functional Verification Vectors for $\text{RSA}\text{-}2048$ Engine}
+\label{tab:rsa_functional_full}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l|>{\raggedright\arraybackslash}p{2.2cm}|c|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{2.2cm}}
+\toprule
+\textbf{Module} & \textbf{Modulus $N$ (Hex)} & \textbf{Exp $E$} & \textbf{Input $M$ (Hex)} & \textbf{Output $C = M^E \pmod N$ (Hex)} \\
+\midrule
+\textbf{$\text{RSA}\text{-}2048$} &
+\texttt{$e49f31a1$ $ff172739$ \newline $2d37e0d6$ $e7f0d8dc$ \newline $\dots$} &
+\texttt{$65537$} &
+\texttt{$4d1a8fd6$ $6d1ed78c$ \newline $3f0230f2$ $bfc14dd0$ \newline $\dots$} &
+\texttt{$b3bc622e$ $5476ecf0$ \newline $0955af40$ $215a31d3$ \newline $\dots$} \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+\raggedright
+\footnotesize\textit{Note: $2048\text{-}\text{bit}$ modulus, exponent, message, and cipher output vectors.}
+\end{table}
+
+\begin{table}[!t]
+\centering
+\caption{$\text{RSA}\text{-}2048$ Verification Performance}
+\label{tab:rsa_perf}
+\small
+\begin{tabular}{l  c c c}
+\toprule
+\textbf{Metric} & \textbf{RISP} & \textbf{$\text{RV}32\text{I}$~\cite{harris2021digital}} & \textbf{Ibex~\cite{gallmann2021swift}} \\
+\midrule
+Cycles (Pure) & $320,972$ & $321,039$ & $320,974$ \\
+Energy/bit ($\mu$J) & $3,265.89$ & $3,515.38$ & $3,578.86$ \\
+Throughput (verify/s) & $124.62$ & $124.60$ & $124.62$ \\
+Throughput/W & $306.19$ & $284.47$ & $279.42$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+To validate the correctness and performance of the asymmetric cryptographic engine, $\text{RSA}\text{-}2048$ evaluations were conducted using standard test vectors. As illustrated in Table \ref{tab:rsa_functional_full}, the functional verification vectors demonstrate proper execution for the $2048\text{-bit}$ modulus, exponent, and cipher outputs. Furthermore, Table \ref{tab:rsa_perf} presents the performance and energy metrics compared against $\text{RV}32\text{I}$ and Ibex baselines, showing that the RISP-Based SoC architecture achieves an optimized cycle count of $320,972$ cycles and a superior energy efficiency of $3,265.89\text{ }\mu\text{J/bit}$ (outperforming the $3,515.38\text{ }\mu\text{J/bit}$ of $\text{RV}32\text{I}$ and $3,578.86\text{ }\mu\text{J/bit}$ of Ibex) while delivering a leading throughput-per-watt of $306.19\text{verifications} \cdot \text{s}^{-1} \cdot \text{W}^{-1}$ at a consistent throughput of $124.62\text{ verifications per second}$.
+
+
+\subsection{Cycle Count and Detailed Performance Comparison}
+
+\begin{table}[!t]
+\centering
+\caption{Comprehensive Performance and Cycle Comparison}
+\label{tab:crypto_summary_comparison}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{l l c c c}
+\toprule
+\textbf{Engine} & \textbf{Operation / Mode} & \textbf{RISP} & \textbf{$\text{RV}32\text{I}$~\cite{harris2021digital}} & \textbf{Ibex~\cite{gallmann2021swift}} \\
+\midrule
+\multirow{4}{*}{$\text{AES}\text{-}128$}
+ & ECB (Cycles) & 88 & 93 & 90 \\
+ & non-ECB (Cycles) & 124 & 129 & 126 \\
+ & Throughput (ECB/non-ECB) & 58.18 / 41.29 & 55.1 / 39.7 & 56.9 / 40.6 \\
+ & Energy (ECB/non-ECB) & 7.00 / 9.85 & 7.95 / 11.03 & 7.84 / 10.97 \\
+\midrule
+\multirow{3}{*}{$\text{SHA}3$}
+ & 1-block (Cycles) & $492$ & $500$ & $496$ \\
+ & 1-block (Mb/s) & $83.25$ & $81.92$ & $82.58$ \\
+ & 4-block (Cycles) & $1,771$ & $1,911$ & $1,907$ \\
+ & 4-block (Mb/s) & $96.85$ & $89.75$ & $89.93$ \\
+ & 16-block (Cycles) & $6,871$ & $7,419$ & $7,415$ \\
+ & 16-block (Mb/s) & $100.97$ & $93.51$ & $93.56$ \\
+\midrule
+\multirow{2}{*}{$\text{RSA}\text{-}2048$}
+ & Verify (Cycles) & $320,972$ & $321,039$ & $320,974$ \\
+ & Energy / Thpt/W & $3,265$ / $306$ & $3,515$ / $284$ & $3,579$ / $279$ \\
+\bottomrule
+\end{tabular}%
+}
+\vspace{2pt}
+\raggedright
+\footnotesize\textit{Note:  ECB = Electronic Codebook mode; Non-ECB = CBC/CTR/CFB modes; AES cycles are per $128-\text{bit}$ block. $\text{SHA}3$ blocks correspond to 128 B, 536 B, and 2,168 B payloads. AES throughput in Mb/s; energy in nJ/bit. RSA energy in $\mu$J/bit and throughput per watt.}
+\end{table}
+
+To provide a comprehensive evaluation of the hardware acceleration efficiency, Table~\ref{tab:crypto_summary_comparison} summarizes the execution cycles, throughput, and energy metrics across the RISP-Based SoC architecture and the $\text{RV}32\text{I}$ and Ibex baseline SoCs for $\text{AES}\text{-}128$, $\text{SHA}3\text{-}256$, and $\text{RSA}\text{-}2048$ workloads. For symmetric $\text{AES}\text{-}128$ operations, RISP-Based SoC reduces the execution overhead to $88$ cycles per block in ECB mode and $124$ cycles in non-ECB modes, outperforming both baseline processors while delivering higher throughput (up to $58.18 \text{ Mb/s}$) and lower energy consumption ($7.00 \text{ nJ/bit}$). In the hash-based $\text{SHA}3\text{-}256$ workloads, the custom sponge data path maintains superior cycle efficiency across 1-block ($492$ cycles), 4-block ($1,771$ cycles), and 16-block ($6,871$ cycles) message loads—completing a 16-block payload significantly faster than the $7,419$ cycles required for $\text{RV}32\text{I}$ and $7,415$ cycles for Ibex. Finally, for the asymmetric $\text{RSA}\text{-}2048$ verification, all architectures require comparable pure cycle counts (around $320,972$ cycles) due to the inherent complexity of modular exponentiation; however, RISP-Based SoC achieves a superior energy efficiency of $3,265 \text{ }\mu\text{J/bit}$ and a throughput-per-watt of $306$ verifications/s/W. Overall, these results demonstrate that the integrated hardware accelerators effectively minimize instruction overhead and enhance energy-performance trade-offs across diverse cryptographic algorithms.
+
+\section{Conclusion}
+\label{sec:Conclusion}
+
+In this work, a secure and modular SoC architecture for extreme-edge IoT was developed, featuring a single-cycle RISP host coupled with AES, $\text{SHA}3$, and RSA accelerators via $\text{AXI}4\text{-}\text{Lite}$. The decoupling of control from cryptographic operations ensured a deterministic root-of-control alongside a minimal hardware overhead. FPGA evaluations demonstrated significant resource and power savings over general-purpose alternatives, validating the effectiveness of the proposed hardware-accelerated security framework.
+
+\bibliographystyle{IEEEtran}
+\bibliography{reference}
+\end{document}

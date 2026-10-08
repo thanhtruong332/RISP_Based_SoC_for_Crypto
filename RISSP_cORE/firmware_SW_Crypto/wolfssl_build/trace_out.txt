@@ -1,0 +1,22 @@
+
+****** xsim v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:35:27 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Tue Aug 18 13:34:59 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/tb_wolfssl_rv32i_trace/xsim_script.tcl
+# xsim {tb_wolfssl_rv32i_trace} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+[TIMEOUT] cyc=3000001 dmem[4]=00000000 (AES ct0=00000000)
+  START marker (0x14->dmem5)=00000000
+  RSA debug: InitRsaKey=0 mp_read_n=0 mp_set_e=0 mp_init_n=0 mp_init_e=0 n.size=0
+  PC-ish: imem_addr=00000010  progress_marker(0x60->dmem24)=0
+$finish called at time : 75000112500 ps : File "F:/RISSP_cORE/firmware_SW_Crypto/wolfssl_build/tb_isolate_wolfssl_rv32i.v" Line 131
+run: Time (s): cpu = 00:00:00 ; elapsed = 00:00:12 . Memory (MB): peak = 194.355 ; gain = 0.000
+exit
+INFO: xsimkernel Simulation Memory Usage: 30520 KB (Peak: 30520 KB), Simulation CPU Usage: 12843 ms
+INFO: [Common 17-206] Exiting xsim at Tue Aug 18 13:35:12 2026...

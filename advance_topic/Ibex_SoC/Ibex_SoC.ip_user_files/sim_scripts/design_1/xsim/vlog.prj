@@ -1,0 +1,41 @@
+sv xil_defaultlib --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/fab0/src" --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/ec67/hdl" --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/3cbc" \
+"../../../bd/design_1/ipshared/fab0/src/ibex_axi_top_combined.sv" \
+"../../../bd/design_1/ip/design_1_ibex_core_0_0/sim/design_1_ibex_core_0_0.sv" \
+
+verilog xil_defaultlib --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/fab0/src" --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/ec67/hdl" --include "../../../../Ibex_SoC.gen/sources_1/bd/design_1/ipshared/3cbc" \
+"../../../bd/design_1/ip/design_1_axi_interconnect_0_imp_xbar_0/sim/design_1_axi_interconnect_0_imp_xbar_0.v" \
+"../../../bd/design_1/ipshared/5e3a/src/AESEncrypt.v" \
+"../../../bd/design_1/ipshared/5e3a/src/AddRoundKey.v" \
+"../../../bd/design_1/ipshared/5e3a/src/KeyExpansionRound.v" \
+"../../../bd/design_1/ipshared/5e3a/src/MixColumns.v" \
+"../../../bd/design_1/ipshared/5e3a/src/ShiftRows.v" \
+"../../../bd/design_1/ipshared/5e3a/src/SubBytes.v" \
+"../../../bd/design_1/ipshared/5e3a/src/SubTable.v" \
+"../../../bd/design_1/ipshared/5e3a/src/aes_wrapper.v" \
+"../../../bd/design_1/ipshared/5e3a/src/aes_axi_slave.v" \
+"../../../bd/design_1/ip/design_1_aes_axi_slave_0_0/sim/design_1_aes_axi_slave_0_0.v" \
+"../../../bd/design_1/ipshared/1fe1/hdl/SHA3_hardware_new_slave_lite_v1_0_S01_AXI.v" \
+"../../../bd/design_1/ipshared/1fe1/src/F_permutation.v" \
+"../../../bd/design_1/ipshared/1fe1/src/Keccak.v" \
+"../../../bd/design_1/ipshared/1fe1/src/Padder.v" \
+"../../../bd/design_1/ipshared/1fe1/src/Padder1.v" \
+"../../../bd/design_1/ipshared/1fe1/src/rconst2in1.v" \
+"../../../bd/design_1/ipshared/1fe1/src/round2in1.v" \
+"../../../bd/design_1/ipshared/1fe1/hdl/SHA3_hardware_new.v" \
+"../../../bd/design_1/ip/design_1_SHA3_hardware_new_0_0/sim/design_1_SHA3_hardware_new_0_0.v" \
+"../../../bd/design_1/ipshared/f662/hdl/RSA_mark03_slave_lite_v1_0_S00_AXI.v" \
+"../../../bd/design_1/ipshared/f662/src/RSA_core.v" \
+"../../../bd/design_1/ipshared/f662/hdl/RSA_mark03.v" \
+"../../../bd/design_1/ip/design_1_RSA_mark03_0_0/sim/design_1_RSA_mark03_0_0.v" \
+"../../../bd/design_1/ip/design_1_blk_mem_gen_0_0/sim/design_1_blk_mem_gen_0_0.v" \
+"../../../bd/design_1/ip/design_1_clk_wiz_0_0/design_1_clk_wiz_0_0_clk_wiz.v" \
+"../../../bd/design_1/ip/design_1_clk_wiz_0_0/design_1_clk_wiz_0_0.v" \
+"../../../bd/design_1/ip/design_1_xlslice_0_0/sim/design_1_xlslice_0_0.v" \
+"../../../bd/design_1/ip/design_1_blk_mem_gen_1_0/sim/design_1_blk_mem_gen_1_0.v" \
+"../../../bd/design_1/ip/design_1_axi_interconnect_0_imp_auto_pc_0/sim/design_1_axi_interconnect_0_imp_auto_pc_0.v" \
+"../../../bd/design_1/sim/design_1.v" \
+
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

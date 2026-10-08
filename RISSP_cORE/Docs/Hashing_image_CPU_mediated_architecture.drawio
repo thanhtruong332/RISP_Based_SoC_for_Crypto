@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Hashing_image SoC - CPU-mediated" id="soc-cpu-mediated">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===================== TITLE ===================== -->
+        <mxCell id="title" value="Hashing_image SoC -- kien truc CPU-mediated (khop Section III.D paper muc tieu)&#10;CPU tu doc block anh, ghi CSR SHA3, doc digest ghi lai BRAM debug" style="text;html=1;fontSize=18;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="900" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== TOP-LEVEL PORTS ===================== -->
+        <mxCell id="port_clk" value="clk_in1_0&#10;(100 MHz)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="port_rst" value="reset_0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="120" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== CLOCK / RESET ===================== -->
+        <mxCell id="clk_wiz" value="clk_wiz_0&#10;Clocking Wizard&#10;100MHz -&gt; 40MHz" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="proc_rst" value="proc_sys_reset_0&#10;-&gt; peripheral_aresetn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="220" y="150" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_clk1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="port_clk" target="clk_wiz">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rst1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="port_rst" target="proc_rst">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_clk2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="clk_wiz" target="proc_rst">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== RISSP CPU ===================== -->
+        <mxCell id="rissp" value="rissp_top_0&#10;RISSP CPU (single-cycle)&#10;-- workload-derived instruction subset --" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="260" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- imem path -->
+        <mxCell id="xlslice" value="xlslice_0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="blk_mem_0" value="blk_mem_gen_0&#10;imem ROM (chuong trinh)&#10;1-cycle latency" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="630" y="195" width="180" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_imem1" value="imem_addr" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="rissp" target="xlslice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_imem2" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="xlslice" target="blk_mem_0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_imem3" value="imem_rdata (douta)" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;exitX=0;exitY=0.3;entryX=1;entryY=0.3;" edge="1" parent="1" source="blk_mem_0" target="rissp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- clk/rst to rissp -->
+        <mxCell id="e_clk_r" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="clk_wiz" target="rissp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rst_r" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;strokeColor=#9673a6;" edge="1" parent="1" source="proc_rst" target="rissp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== AXI INTERCONNECT ===================== -->
+        <mxCell id="interconnect" value="axi_interconnect_0&#10;(1 master S00 -- 3 slave M00/M01/M02)&#10;AXI4-Lite" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="400" width="600" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_axi_m" value="m_axi (AXI4-Lite MASTER)&#10;S00_AXI" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="rissp" target="interconnect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== SHA3 (CPU-mediated) ===================== -->
+        <mxCell id="sha3" value="SHA3_hardware_new_0&#10;SHA3-256 (Keccak) -- CPU-MEDIATED&#10;(khong sua RTL loi Keccak)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="540" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sha3_csr" value="CSR map (S01_AXI, 8-bit addr):&#10;0x00 W  DATA_HI&#10;0x04 W  DATA_LO&#10;0x08 W  CTRL (iReady/iLast/iByte_num)&#10;0x0C R  STATUS (oReady)&#10;0x10-0x2C R  DIGEST[7:0] MSB-first" style="text;html=1;align=left;fontSize=10;fillColor=#fff;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="80" y="620" width="220" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_sha3_1" value="M00_AXI&#10;0x44A00000 / 64K" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="interconnect" target="sha3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BRAM DEBUG ===================== -->
+        <mxCell id="bram_ctrl0" value="axi_bram_ctrl_0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="360" y="540" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="blk_mem_1" value="blk_mem_gen_1&#10;BRAM debug (ket qua)&#10;0xC0000000 / 8K" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="360" y="600" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sha3_2" value="M01_AXI&#10;0xC0000000 / 8K" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="interconnect" target="bram_ctrl0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bram0" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="bram_ctrl0" target="blk_mem_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== BRAM IMAGE ===================== -->
+        <mxCell id="bram_ctrl1" value="axi_bram_ctrl_1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="580" y="540" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="blk_mem_2" value="blk_mem_gen_2&#10;BRAM anh (input)&#10;0xC2000000 / 256K&#10;(du 512x512 = 262144 byte)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="580" y="600" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sha3_3" value="M02_AXI&#10;0xC2000000 / 256K" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;" edge="1" parent="1" source="interconnect" target="bram_ctrl1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bram1" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="bram_ctrl1" target="blk_mem_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== NOTE: khac biet voi mark3 ===================== -->
+        <mxCell id="note_diff" value="QUAN TRONG: SHA3_hardware_new_0 CHI CO 1 cong S01_AXI (slave).&#10;KHONG co M00_AXI (master) nhu ban mark3 -- CPU la ben DUY NHAT&#10;doc du lieu anh tu blk_mem_gen_2, SHA3 hoan toan bi dong." style="text;html=1;align=left;fontSize=11;fontStyle=2;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="850" y="540" width="380" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== EXECUTION SEQUENCE (Fig.3 paper) ===================== -->
+        <mxCell id="seq_title" value="Luong thuc thi (khop Fig.3 paper Section III.D)" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="80" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="seq_box" value="1. Firmware nap anh vao blk_mem_gen_2 (truoc khi hash)&#10;2. CPU: lw block anh tu BRAM anh&#10;3. CPU: sw DATA_HI/DATA_LO vao SHA3 CSR&#10;4. CPU: sw CTRL (iReady=1, iLast=1 o block cuoi)&#10;5. Lap lai buoc 2-4 cho toi het anh&#10;6. CPU: poll STATUS (0x0C) cho toi oReady=1&#10;7. CPU: doc 8 word DIGEST (0x10-0x2C)&#10;8. CPU: ghi digest ra blk_mem_gen_1 (BRAM debug)" style="text;html=1;align=left;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="120" width="420" height="180" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== ADDRESS MAP TABLE ===================== -->
+        <mxCell id="addr_title" value="Ban do dia chi AXI (S00 master duy nhat)" style="text;html=1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="340" width="400" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="addr_table" value="M00: SHA3 CSR       0x44A00000 / 64K&#10;M01: BRAM debug      0xC0000000 / 8K&#10;M02: BRAM anh        0xC2000000 / 256K" style="text;html=1;align=left;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;fontFamily=Courier New;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="375" width="380" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== SO SANH voi mark3 (bi loai) ===================== -->
+        <mxCell id="mark3_note_title" value="Da loai bo khoi ban ve nay (khong dung cho ban CPU-mediated):" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="850" y="640" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="mark3_note" value="- sha3_hardware_mark3_0 (M00_AXI master rieng cho SHA3 tu DMA)&#10;- Cong S01 thu 2 tren axi_interconnect_0 (NUM_SI=2)&#10;&#10;Ban CPU-mediated nay: NUM_SI=1, khong can DMA master rieng." style="text;html=1;align=left;fontSize=11;fillColor=#fff;strokeColor=#b85450;dashed=1;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="666" width="420" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== NOTE: fix design rong VAN CAN ===================== -->
+        <mxCell id="fixnote" value="LUU Y: design_1_wrapper CHI CO 2 cong (clk_in1_0/reset_0), KHONG co output nao&#10;-&gt; Vivado se quet sach logic luc synth_design ('The design is empty' o place_design),&#10;BAT KE dang dung SHA3 IP nao. Van PHAI ap lai fix 'debug_imem_addr' (tap rissp_top_0/imem_addr&#10;lam 1 external port -- pin nay KHONG thuoc bundle interface nao, an toan) truoc khi build ban nay." style="text;html=1;align=left;fontSize=11;fontStyle=2;fillColor=#fff2cc;strokeColor=#d6b656;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="850" y="766" width="420" height="90" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

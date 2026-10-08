@@ -1,0 +1,17 @@
+# Vivado: tu sinh lai khi chay synth/impl/sim
+*.runs/
+*.cache/
+*.sim/
+*.hw/
+*.tmp/
+.Xil/
+xsim.dir/
+_sim_run/
+_verify/
+*.log
+*.jou
+*.str
+*.pb
+*.wdb
+*.bit
+*.backup.*

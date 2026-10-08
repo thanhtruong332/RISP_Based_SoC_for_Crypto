@@ -570,7 +570,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:1336e5c7</spirit:value>
+            <spirit:value>9:5b1a73c7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -581,7 +581,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:1336e5c7</spirit:value>
+            <spirit:value>9:5b1a73c7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -597,11 +597,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Mon Aug 17 05:23:38 UTC 2026</spirit:value>
+            <spirit:value>Thu Oct 08 16:04:29 UTC 2026</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:e1e21051</spirit:value>
+            <spirit:value>9:a9ce8651</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -617,11 +617,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Mon Aug 17 05:23:38 UTC 2026</spirit:value>
+            <spirit:value>Thu Oct 08 16:04:29 UTC 2026</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:e1e21051</spirit:value>
+            <spirit:value>9:a9ce8651</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -637,11 +637,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Mon Aug 17 05:23:38 UTC 2026</spirit:value>
+            <spirit:value>Thu Oct 08 16:04:29 UTC 2026</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:1336e5c7</spirit:value>
+            <spirit:value>9:5b1a73c7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -657,11 +657,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Mon Aug 17 05:23:38 UTC 2026</spirit:value>
+            <spirit:value>Thu Oct 08 16:04:29 UTC 2026</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:1336e5c7</spirit:value>
+            <spirit:value>9:5b1a73c7</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1092,51 +1092,51 @@
     <spirit:fileSet>
       <spirit:name>xilinx_verilogbehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/hdl/rv32i_pure_master_lite_v1_0_M00_AXI.v</spirit:name>
+        <spirit:name>../../ipshared/a754/hdl/rv32i_pure_master_lite_v1_0_M00_AXI.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/ALU.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/ALU.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/ALU_control.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/ALU_control.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Branch_prediction.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Branch_prediction.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Control_unit.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Control_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Forwarding_unit.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Forwarding_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Hazard_detection.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Hazard_detection.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Immediate_generator.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Immediate_generator.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/PC.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/PC.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Register_file.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Register_file.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/rv32i_top.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/rv32i_top.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/hdl/rv32i_pure.v</spirit:name>
+        <spirit:name>../../ipshared/a754/hdl/rv32i_pure.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1151,51 +1151,51 @@
     <spirit:fileSet>
       <spirit:name>xilinx_verilogsynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/hdl/rv32i_pure_master_lite_v1_0_M00_AXI.v</spirit:name>
+        <spirit:name>../../ipshared/a754/hdl/rv32i_pure_master_lite_v1_0_M00_AXI.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/ALU.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/ALU.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/ALU_control.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/ALU_control.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Branch_prediction.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Branch_prediction.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Control_unit.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Control_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Forwarding_unit.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Forwarding_unit.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Hazard_detection.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Hazard_detection.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Immediate_generator.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Immediate_generator.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/PC.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/PC.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/Register_file.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/Register_file.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/src/rv32i_top.v</spirit:name>
+        <spirit:name>../../ipshared/a754/src/rv32i_top.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>../../ipshared/a8a4/hdl/rv32i_pure.v</spirit:name>
+        <spirit:name>../../ipshared/a754/hdl/rv32i_pure.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1251,7 +1251,7 @@
   <spirit:vendorExtensions>
     <xilinx:coreExtensions>
       <xilinx:displayName>RV32I Core (FIXED - imem 1-cycle)</xilinx:displayName>
-      <xilinx:coreRevision>1</xilinx:coreRevision>
+      <xilinx:coreRevision>2</xilinx:coreRevision>
       <xilinx:configElementInfos>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.M00_AXI.ADDR_WIDTH" xilinx:valueSource="auto" xilinx:valuePermission="bd"/>
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.M00_AXI.ARUSER_WIDTH" xilinx:valueSource="constant" xilinx:valuePermission="bd"/>

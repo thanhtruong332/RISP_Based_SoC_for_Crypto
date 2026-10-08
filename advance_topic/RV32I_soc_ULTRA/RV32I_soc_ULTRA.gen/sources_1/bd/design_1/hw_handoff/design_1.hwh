@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Mon Aug 17 12:23:39 2026" VIVADOVERSION="2024.2">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Thu Oct  8 23:04:29 2026" VIVADOVERSION="2024.2">
 
   <SYSTEMINFO ARCH="zynq" BOARD="digilentinc.com:zedboard:part0:1.0" DEVICE="7z020" NAME="design_1" PACKAGE="clg484" SPEEDGRADE="-1"/>
 
@@ -2808,7 +2808,7 @@
         <PARAMETER NAME="Assume_Synchronous_Clk" VALUE="false"/>
         <PARAMETER NAME="Byte_Size" VALUE="9"/>
         <PARAMETER NAME="CTRL_ECC_ALGO" VALUE="NONE"/>
-        <PARAMETER NAME="Coe_File" VALUE="d:/Viettel_semi/SE-RISSP_FULL/rsa2048.coe"/>
+        <PARAMETER NAME="Coe_File" VALUE="../../../../../../../../firmware_testbench/SE-RISSP_FULL/rsa2048.coe"/>
         <PARAMETER NAME="Collision_Warnings" VALUE="ALL"/>
         <PARAMETER NAME="Component_Name" VALUE="design_1_blk_mem_gen_0_0"/>
         <PARAMETER NAME="Disable_Collision_Warnings" VALUE="false"/>
@@ -3799,7 +3799,7 @@
       </PORTS>
       <BUSINTERFACES/>
     </MODULE>
-    <MODULE COREREVISION="1" FULLNAME="/rv32i_fixed_0" HWVERSION="1.0" INSTANCE="rv32i_fixed_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="rv32i_fixed" VLNV="xilinx.com:user:rv32i_fixed:1.0">
+    <MODULE COREREVISION="2" FULLNAME="/rv32i_fixed_0" HWVERSION="1.0" INSTANCE="rv32i_fixed_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="rv32i_fixed" VLNV="xilinx.com:user:rv32i_fixed:1.0">
       <DOCUMENTS/>
       <PARAMETERS>
         <PARAMETER NAME="C_M00_AXI_ADDR_WIDTH" VALUE="32"/>

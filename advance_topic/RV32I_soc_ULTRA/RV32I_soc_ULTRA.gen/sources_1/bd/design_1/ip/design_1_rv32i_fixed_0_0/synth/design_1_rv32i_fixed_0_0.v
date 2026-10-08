@@ -48,11 +48,11 @@
 
 
 // IP VLNV: xilinx.com:user:rv32i_fixed:1.0
-// IP Revision: 1
+// IP Revision: 2
 
 (* X_CORE_INFO = "rv32i_ultra,Vivado 2024.2" *)
 (* CHECK_LICENSE_TYPE = "design_1_rv32i_fixed_0_0,rv32i_ultra,{}" *)
-(* CORE_GENERATION_INFO = "design_1_rv32i_fixed_0_0,rv32i_ultra,{x_ipProduct=Vivado 2024.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=rv32i_fixed,x_ipVersion=1.0,x_ipCoreRevision=1,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,C_M00_AXI_ADDR_WIDTH=32,C_M00_AXI_DATA_WIDTH=32,C_M00_AXI_TRANSACTIONS_NUM=4}" *)
+(* CORE_GENERATION_INFO = "design_1_rv32i_fixed_0_0,rv32i_ultra,{x_ipProduct=Vivado 2024.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=rv32i_fixed,x_ipVersion=1.0,x_ipCoreRevision=2,x_ipLanguage=VERILOG,x_ipSimLanguage=MIXED,C_M00_AXI_ADDR_WIDTH=32,C_M00_AXI_DATA_WIDTH=32,C_M00_AXI_TRANSACTIONS_NUM=4}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module design_1_rv32i_fixed_0_0 (
   m00_axi_init_axi_txn,

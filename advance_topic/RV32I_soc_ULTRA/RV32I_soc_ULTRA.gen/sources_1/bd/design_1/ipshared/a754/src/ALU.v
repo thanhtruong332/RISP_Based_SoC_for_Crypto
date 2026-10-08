@@ -19,7 +19,7 @@ module ALU(
             4'b1000:    ALU_result  = A & B;                      //AND
             4'b1001:    ALU_result  = A << B[4:0];                //Shift Left Logical
             4'b1010:    ALU_result  = A >> B[4:0];                //Shift Right Logical
-            4'b1011:    ALU_result  = $signed(A) >> B[4:0];       //Shift Right Arithmetic
+            4'b1011:    ALU_result  = $signed(A) >>> B[4:0];      //Shift Right Arithmetic
             4'b1100:    ALU_result  = (A == B);                   //Equal
             4'b1101:    ALU_result  = (A != B);                   //Not equal
             4'b1110:    ALU_result  = A + B;                      //PC_plus

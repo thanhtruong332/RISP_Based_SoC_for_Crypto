@@ -4,7 +4,7 @@
     "xci_name": "design_1_rv32i_fixed_0_0",
     "cell_name": "rv32i_fixed_0",
     "component_reference": "xilinx.com:user:rv32i_fixed:1.0",
-    "ip_revision": "1",
+    "ip_revision": "2",
     "gen_directory": "../../../../../../RV32I_soc_ULTRA.gen/sources_1/bd/design_1/ip/design_1_rv32i_fixed_0_0",
     "parameters": {
       "component_parameters": {
@@ -33,7 +33,7 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "1" } ],
+        "IPREVISION": [ { "value": "2" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../RV32I_soc_ULTRA.gen/sources_1/bd/design_1/ip/design_1_rv32i_fixed_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],

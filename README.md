@@ -57,12 +57,12 @@ Ibex_SoC = `rsa2048.coe` · 3 project wolfSSL = `rissp_wolfssl.coe`.
 Ibex chạy không cần GUI: `firmware_testbench/Ibex_FULL/run_all.bat tb_ibex_ecb aes_ecb`
 (đặt biến `XILINX_VIVADO` nếu Vivado không nằm ở `F:\vivado\Vivado\2024.2`).
 
-## ⚠️ Trạng thái cần biết (giống hệt máy gốc, cố ý giữ nguyên)
+## ⚠️ Trạng thái cần biết
 
-- **RV32I_soc_ULTRA: IP `rv32i_fixed` hiện "locked — different revision"**. Project dùng revision 1
-  (bản đo số liệu paper), IP repo đã lên revision 2 (sửa bug SRA `>>`→`>>>` trong `ALU.v`).
-  Vẫn mô phỏng + synthesis bình thường bằng output đã sinh. **Đừng bấm Upgrade IP** nếu muốn tái tạo
-  đúng số liệu paper; upgrade = áp dụng bản sửa SRA (việc còn mở trong CLAUDE.md).
+- **RV32I_soc_ULTRA đã nâng IP `rv32i_fixed` lên revision 2** (2026-10-08, sửa bug SRA
+  `>>`→`>>>` trong `ALU.v` — khác rev 1 đúng 1 dòng). Không còn IP bị khoá. Chu kỳ 8/8 workload
+  không đổi (firmware không dùng SRA/SRAI), nhưng **LUT/FF/Power/WNS của RV32I trong CLAUDE.md là số
+  rev 1 → chạy lại Synthesis + Implementation để lấy số mới** trước khi đưa vào paper.
 - **Ibex_SoC**: project đặt define `SYNTHESIS` cho mô phỏng (bắt buộc — tắt DPI-C của lowRISC).
   Run Simulation GUI tự dùng; nếu tự viết flow dòng lệnh phải thêm `-d SYNTHESIS` cho `xvlog`.
 - **3 project wolfSSL**: chỉ RV32I_software có testbench SoC (`tb_wolfssl_software`, `tb_aes_sha3_multi`).
@@ -88,11 +88,11 @@ Ibex chạy không cần GUI: `firmware_testbench/Ibex_FULL/run_all.bat tb_ibex_
 |---|---|
 | Mở 6 project: file thiếu / file trỏ ra ngoài repo / IP repo thiếu | 0 / 0 / 0 |
 | Board ZedBoard | tìm thấy (3 SoC chính) |
-| Validate BD | OK 5/6 (RV32I_soc_ULTRA: IP locked như trên) |
+| Validate BD / IP bị khoá | OK 6/6 / 0 |
 | SE-RISSP_AES_ULTRA · `tb_sha3` | PASS, PURE 492 ck |
 | Ibex_SoC · `tb_ibex_rsa2048` | PASS, PURE 320974 ck |
 | Ibex_SoC · `run_manual_sim.tcl tb_ibex_ecb` | PASS, PURE 90 ck |
-| RV32I_soc_ULTRA · `tb_rv32i_rsa2048` | PASS, PURE 321039 ck |
-| RV32I_soc_ULTRA · Run Synthesis | Complete, 0 error, 0 critical warning |
+| RV32I_soc_ULTRA (rev 2) · 8 workload | 8/8 PASS: ECB 93 · CBC/CFB/CTR 129 · SHA3 500/1911/7419 · RSA 321039 ck |
+| RV32I_soc_ULTRA (rev 1, trước nâng cấp) · Run Synthesis | Complete, 0 error, 0 critical warning |
 
 Số chu kỳ khớp đúng bảng trong `RISSP_cORE/CLAUDE.md`.

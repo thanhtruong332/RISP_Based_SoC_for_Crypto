@@ -41,7 +41,8 @@ tính mới, venue khuyến nghị, baseline core khuyến nghị). Mục này c
 > 3. **§ TRẠNG THÁI IBEX** — số liệu Ibex đầy đủ (nhánh HW accelerator gốc).
 > 4. **§ CÔNG THỨC** và **§ CƠ SỞ ĐO** — quy ước tính toán, phải giữ nguyên.
 > 5. **§ BẢN SAO GITHUB** — repo private chứa toàn bộ project để mở ở máy
->    khác + 4 phát hiện trạng thái thật (IP RV32I rev 1 vs 2...).
+>    khác + 4 phát hiện trạng thái thật + **nâng cấp IP RV32I rev 2 (sửa
+>    SRA) — số LUT/Power RV32I cần đo lại**.
 >
 > Mọi mục còn lại là **lịch sử/tham khảo**. Các con số chu kỳ và power ghi
 > trong phần lịch sử (trước mục "TIẾN ĐỘ HIỆN TẠI") đều đo TRƯỚC khi sửa
@@ -83,11 +84,11 @@ PASS 321039 ck · RV32I_soc_ULTRA Run Synthesis Complete 0 error — số chu k�
 khớp đúng bảng § TIẾN ĐỘ HIỆN TẠI.
 
 **4 phát hiện mới về trạng thái THẬT trên máy gốc** (không phải do bản sao):
-1. `RV32I_soc_ULTRA` dùng IP `rv32i_fixed` **revision 1** (trước sửa SRA),
-   IP repo đã lên **revision 2** → IP hiện "locked – different revision",
-   validate BD báo lỗi; vẫn mô phỏng + synthesis được bằng output đã sinh.
-   `RV32I_software` dùng revision 2. Xác nhận lại đúng mục "chưa áp dụng
-   bản sửa SRA cho SoC chính" — **đừng Upgrade IP** nếu muốn giữ số paper.
+1. `RV32I_soc_ULTRA` từng dùng IP `rv32i_fixed` **revision 1** (trước sửa
+   SRA) trong khi IP repo đã lên **revision 2** → IP "locked – different
+   revision". **✅ ĐÃ NÂNG CẤP lên revision 2 (2026-10-08, theo yêu cầu
+   người dùng)** cả trên máy gốc lẫn repo GitHub — hết khoá, validate OK.
+   Xem § "NÂNG CẤP IP RV32I" ngay dưới.
 2. `Ibex_SoC.xpr` còn 56 tham chiếu sim tới `ipshared/7317/` không tồn tại
    (sót từ trước khi đóng gói lại IP). Đã gỡ trong bản sao.
 3. `Ibex_FULL/run_manual_sim.tcl` gốc **đang hỏng**: tìm 56 file `.sv` lẻ
@@ -98,8 +99,32 @@ khớp đúng bảng § TIẾN ĐỘ HIỆN TẠI.
    Run Simulation không bị (tự dùng define); flow dòng lệnh phải thêm
    `xvlog -d SYNTHESIS`.
 
+### NÂNG CẤP IP RV32I rev 1 → rev 2 (sửa SRA) — 2026-10-08
+
+- **Diff rev 1 vs rev 2**: 9/10 file RTL giống hệt; khác **đúng 1 dòng**
+  `ALU.v`: `$signed(A) >> B[4:0]` → `$signed(A) >>> B[4:0]` (SRA).
+- **Sao lưu project gốc trước khi sửa** (đủ 816 file, cả `.runs` chứa
+  report LUT/Power rev 1 của paper):
+  `F:\advance_topic\_backup_RV32I_soc_ULTRA_rev1_20261008`.
+- `upgrade_ip` + `generate_target all` trên `F:\advance_topic\RV32I_soc_ULTRA`
+  và bản repo → rev 2, 0 IP khoá, validate OK; ipshared mới `a754`.
+- **Hồi quy 8/8 workload trên bản clone repo (lõi rev 2, đã xác nhận
+  `vlog.prj` biên dịch `ipshared/a754/src/ALU.v` có `>>>`)** — tất cả
+  `[PASS]`, PURE trùng khít bảng § TIẾN ĐỘ HIỆN TẠI:
+  ECB 93 · CBC 129 · CFB 129 · CTR 129 · SHA3 1blk 500 · 4blk 1911 ·
+  16blk 7419 · RSA-2048 321039. Project gốc sau nâng cấp: `tb_rv32i_rsa2048`
+  PASS 321039.
+- Lý do chu kỳ không đổi: giải mã cả 9 `.coe` của
+  `D:\Viettel_semi\SE-RISSP_FULL` → **0 lệnh SRA/SRAI** (đóng luôn mục
+  "cần rà soát firmware HW-accelerator có dùng SRA không").
+- **Việc còn lại**: chạy lại Synthesis + Implementation `RV32I_soc_ULTRA`
+  để lấy LUT/FF/Power/WNS rev 2 (số 17632 LUT SoC, 26233 FF, 0,438 W,
+  +5,249 ns hiện là rev 1); OOC lõi RV32I (1626/1204 LUT) cũng là rev 1.
+  Cập nhật mọi số Energy RV32I nếu Power đổi.
+
 Thư mục tạm có thể xoá: `D:\RISSP_GH_test`, `D:\RISSP_GH_t2`,
-`D:\RISSP_GH_t3`, `D:\RISSP_GH_fromgithub` (bản clone kiểm chứng).
+`D:\RISSP_GH_t3`, `D:\RISSP_GH_t4`, `D:\RISSP_GH_t5`,
+`D:\RISSP_GH_fromgithub` (bản clone kiểm chứng).
 
 ## 🔐 wolfSSL THẬT TRÊN BARE-METAL — thay code tự viết bằng thư viện production
 
@@ -255,12 +280,10 @@ dịch phải số học trên số có dấu khi biên dịch cho RV32I. RSA-20
 (`sp_int.c`/`sp_c32.c`) dùng `srai` ở 13 hàm khác — đã chạy lại RSA từ đầu
 với ALU đã sửa (số trong bảng ở trên đã dùng ALU đã sửa).
 
-**⚠️ Phạm vi sửa CHỈ giới hạn ở nhánh wolfSSL**: `RV32I_soc_ULTRA` (SoC
-HW-accelerator, dữ liệu CHÍNH của paper) **CHƯA được kiểm tra/sửa**. Nếu
-firmware assembly (`.s`) của nhánh HW-accelerator dùng SRA/SRAI ở đâu đó,
-số liệu đã báo cáo (bảng "TIẾN ĐỘ HIỆN TẠI", LUT/Power/timing) **cần rà
-soát lại** — chưa xác minh. Script refresh IP:
-`F:\RISSP_cORE\firmware_SW_Crypto\refresh_rv32i_ip.tcl`.
+**✅ Đã áp dụng cho cả `RV32I_soc_ULTRA` (SoC chính) ngày 2026-10-08** —
+xem § "NÂNG CẤP IP RV32I". Chu kỳ 8/8 workload không đổi (firmware không
+dùng SRA/SRAI); chỉ LUT/FF/Power/WNS của RV32I cần đo lại. Script refresh
+IP: `F:\RISSP_cORE\firmware_SW_Crypto\refresh_rv32i_ip.tcl`.
 
 ### 🔍 Vì sao ra đúng những con số này — đã research đối chiếu bên ngoài (2026-08-28)
 
@@ -397,6 +420,11 @@ RV32I 27,00 ck.
 
 #### 4. Công suất + năng lượng (Implementation, strategy default cả 2 bên)
 
+> ⚠️ (2026-10-08) Cột **RV32I** ở mục 4, 5 và bảng Implementation của
+> § TRẠNG THÁI IBEX là số của IP **rev 1** (trước sửa SRA). SoC đã nâng
+> lên rev 2 — chu kỳ không đổi (đã hồi quy 8/8) nhưng **Power/LUT/FF/WNS
+> RV32I phải đo lại** trước khi trích. Xem § NÂNG CẤP IP RV32I.
+
 | | RISSP | RV32I |
 |---|---:|---:|
 | Total On-Chip Power | **0,407 W** | **0,438 W** (+7,6%) |
@@ -419,6 +447,8 @@ khoảng cách năng lượng lớn gấp đôi khoảng cách chu kỳ.
 lõi CPU dư thừa không biến mất khi nó nhàn rỗi.*
 
 #### 5. Diện tích lõi (OOC, xc7z020, `report_utilization`)
+
+> ⚠️ Số RV32I bên dưới đo trên RTL rev 1 (SRA `>>`); cần đo lại với rev 2.
 
 | Cấu hình | default LUT | AreaOpt LUT | LUTRAM | FF |
 |---|---:|---:|---:|---:|
@@ -906,7 +936,10 @@ hỏi lại**, vì đây sẽ là nhượng bộ kiến trúc thứ 4.
   GITHUB. Người dùng chốt: **chỉ làm việc với những gì CLAUDE.md có nhắc
   tới** — các thư mục không có trong tài liệu (`SHA3_Core_mark2/3`,
   `soc_upgrade_20260916`, `github_upload`, `_audit_tmp`, `firmware_Aes`…)
-  không đụng vào, không đưa lên repo.
+  không đụng vào, không đưa lên repo. Cùng ngày: đổi tên `Viettel_semi` →
+  `firmware_testbench` trên repo; **nâng IP RV32I rev 1→2 (sửa SRA) trên
+  máy gốc + repo**, hồi quy 8/8 PASS chu kỳ không đổi, còn phải đo lại
+  LUT/Power RV32I.
 
 ---
 
@@ -967,10 +1000,14 @@ breakdown hierarchy). Nhớ thêm `barrel_shifter.v`, `comparator.v`,
   gỡ khoá) để không bị phản biện gỡ mất kết quả.
 - **Mỗi SoC dùng giá trị `P` riêng** (0,407W RISSP · 0,438W RV32I ·
   0,446W Ibex). Không dùng chung 1 giá trị cho cả ba.
-- **Bug ALU SRA của RV32I** (`ALU.v`, `>>` phải là `>>>`) mới xác nhận
-  sửa cho SoC test wolfSSL — **chưa kiểm tra trên `RV32I_soc_ULTRA`**
-  (SoC chính của paper). Cần rà soát nếu firmware assembly HW-accelerator
-  có dùng SRA/SRAI.
+- **Bug ALU SRA của RV32I** (`ALU.v`, `>>` phải là `>>>`) — **đã sửa cho
+  cả SoC chính `RV32I_soc_ULTRA`** (nâng IP rev 1→2, 2026-10-08, người
+  dùng yêu cầu). Đây là ngoại lệ có chủ đích của quyết định "KHÔNG sửa RTL
+  RV32I" ở trên: quyết định đó vẫn giữ cho `DONT_TOUCH` + reset toàn mảng
+  (vấn đề diện tích); còn SRA là bug chức năng nên được sửa. Chu kỳ không
+  đổi (0 lệnh SRA/SRAI trong 9 `.coe`), **LUT/FF/Power/WNS RV32I (1626 LUT,
+  1663 FF, 0,438 W, +5,249 ns) là số của rev 1 → phải chạy lại
+  Implementation trước khi trích vào paper.**
 - **Đã bỏ hẳn mục "FIRMWARE PHẦN MỀM THUẦN (SOFTWARE-ONLY)"** (2026-08-29,
   theo yêu cầu người dùng) — bảng PURE cycles của nhánh AES/SHA3/RSA tự
   viết tay (RISSP 16.498/142.740/59.899.645 ck...) không còn trong tài

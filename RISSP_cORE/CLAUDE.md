@@ -53,6 +53,8 @@ tính mới, venue khuyến nghị, baseline core khuyến nghị). Mục này c
 Repo **private**: `https://github.com/thanhtruong332/RISSP-Paper-Vivado`
 (chỉ chủ repo + collaborator được mời xem được — GitHub không có chế độ
 "ai có link thì vào"). Bản làm việc liên kết với remote: `D:\RISSP_GH`.
+Hướng dẫn từng bước cho người dùng (Word, 2 trang):
+`Docs\HuongDan_MoProject_MayMoi.docx` — cũng có ở gốc repo GitHub.
 
 **Nội dung**: 6 project Vivado (3 SoC chính `SE-RISSP_AES_ULTRA`/
 `RV32I_soc_ULTRA`/`Ibex_SoC` + 3 SoC wolfSSL `RISSP_software`/

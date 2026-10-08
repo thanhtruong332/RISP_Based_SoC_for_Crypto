@@ -31,7 +31,7 @@ advance_topic/
   RV32I_FIXED/          IP rv32i_fixed (+ project đóng gói)
   Ibex_Core/            IP ibex_core
 SE_RISSP_LIBRARY/       IP RISSP_CORE_NEW, AES_NEOS, SHA_3/SHA3_hardware_new_1_0
-Viettel_semi/
+firmware_testbench/     (= D:\Viettel_semi trên máy gốc)
   SE-RISSP_FULL/        TOÀN BỘ .coe (dùng chung cho cả 3 lõi) + testbench RISSP + gen_all.py
   RV32I_FULL/           testbench RV32I
   Ibex_FULL/            testbench Ibex + run_manual_sim.tcl / run_all.bat
@@ -44,17 +44,17 @@ board_files/            ZedBoard board files
 ## Chạy mô phỏng (cách GUI, giống trên máy gốc)
 
 Mỗi SoC chính: 1 file `.coe` nạp vào `blk_mem_gen_0` + 1 testbench. Chi tiết từng bài:
-`Viettel_semi/SE-RISSP_FULL/README.md`, `Viettel_semi/RV32I_FULL/README.md`, `Viettel_semi/Ibex_FULL/README.md`.
+`firmware_testbench/SE-RISSP_FULL/README.md`, `firmware_testbench/RV32I_FULL/README.md`, `firmware_testbench/Ibex_FULL/README.md`.
 
 1. Mở `.xpr` → Block Design → double-click `blk_mem_gen_0` → Other Options → Coe File =
-   `Viettel_semi/SE-RISSP_FULL/<bai>.coe`.
+   `firmware_testbench/SE-RISSP_FULL/<bai>.coe`.
 2. Validate → chuột phải `design_1.bd` → **Reset Output Products** → **Generate Output Products**.
 3. Add Sources (simulation) → testbench tương ứng → Set as Top → Run Behavioral Simulation.
 
 `.coe` đang nạp sẵn khi mở: SE-RISSP_AES_ULTRA = `sha3.coe` · RV32I_soc_ULTRA = `rsa2048.coe` ·
 Ibex_SoC = `rsa2048.coe` · 3 project wolfSSL = `rissp_wolfssl.coe`.
 
-Ibex chạy không cần GUI: `Viettel_semi/Ibex_FULL/run_all.bat tb_ibex_ecb aes_ecb`
+Ibex chạy không cần GUI: `firmware_testbench/Ibex_FULL/run_all.bat tb_ibex_ecb aes_ecb`
 (đặt biến `XILINX_VIVADO` nếu Vivado không nằm ở `F:\vivado\Vivado\2024.2`).
 
 ## ⚠️ Trạng thái cần biết (giống hệt máy gốc, cố ý giữ nguyên)
@@ -73,7 +73,7 @@ Ibex chạy không cần GUI: `Viettel_semi/Ibex_FULL/run_all.bat tb_ibex_ecb ae
 
 ## Khác biệt so với máy gốc (chỉ để chạy được ở máy khác)
 
-- Đường dẫn tuyệt đối `d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi`, thư mục board XHub → đổi sang tương đối.
+- Đường dẫn tuyệt đối `d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi`, thư mục board XHub → đổi sang tương đối. Thư mục `Viettel_semi` đổi tên thành `firmware_testbench`.
 - 3 project wolfSSL: gỡ tham chiếu tới file của nhánh "phần mềm tự viết tay" đã xoá
   (`*_sw.coe`, `tb_*_software.v`); RISSP_software/Ibex_software đổi `.coe` từ file đã xoá sang
   `rissp_wolfssl.coe` và sinh lại `blk_mem_gen_0`.

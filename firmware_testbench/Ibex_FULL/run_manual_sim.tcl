@@ -36,7 +36,7 @@ set soc_root   "$repo_root/advance_topic/Ibex_SoC"
 set ibex_repo  "$repo_root/advance_topic/Ibex_Core"
 set ibex_dir   "$ibex_repo/ip_repo/src"
 set full_dir   $here
-set coe_src    "$repo_root/Viettel_semi/SE-RISSP_FULL/$coe_name.coe"
+set coe_src    "$repo_root/firmware_testbench/SE-RISSP_FULL/$coe_name.coe"
 
 # --- Thu tu compile dung cho 56 file ibex, doc tu ibex_compile_order.f
 #     (da loc tu IBEX_CORE/compile_order.f, chi giu file thuc su co trong

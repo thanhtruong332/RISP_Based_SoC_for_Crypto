@@ -109,7 +109,7 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../Viettel_semi/SE-RISSP_FULL/sha3.coe">
+      <File Path="$PPRDIR/../../firmware_testbench/SE-RISSP_FULL/sha3.coe">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>

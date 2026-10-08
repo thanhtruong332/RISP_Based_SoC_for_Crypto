@@ -811,7 +811,7 @@
         "inst_hier_path": "blk_mem_gen_0",
         "parameters": {
           "Coe_File": {
-            "value": "../../../../../../../../Viettel_semi/SE-RISSP_FULL/sha3.coe"
+            "value": "../../../../../../../../firmware_testbench/SE-RISSP_FULL/sha3.coe"
           },
           "Enable_32bit_Address": {
             "value": "false"

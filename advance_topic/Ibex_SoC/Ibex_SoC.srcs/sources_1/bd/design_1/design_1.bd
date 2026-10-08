@@ -1827,7 +1827,7 @@
             "value": "NONE"
           },
           "Coe_File": {
-            "value": "../../../../../../../../Viettel_semi/SE-RISSP_FULL/rsa2048.coe"
+            "value": "../../../../../../../../firmware_testbench/SE-RISSP_FULL/rsa2048.coe"
           },
           "Disable_Collision_Warnings": {
             "value": "false"

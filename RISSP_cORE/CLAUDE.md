@@ -57,8 +57,9 @@ Repo **private**: `https://github.com/thanhtruong332/RISSP-Paper-Vivado`
 `RV32I_soc_ULTRA`/`Ibex_SoC` + 3 SoC wolfSSL `RISSP_software`/
 `RV32I_software`/`Ibex_software`), 6 IP repo (`SE_RISSP_LIBRARY/
 {RISSP_CORE_NEW,AES_NEOS,SHA_3/SHA3_hardware_new_1_0}`, `RSA_mark03`,
-`RV32I_FIXED`, `Ibex_Core`), `Viettel_semi/{SE-RISSP,RV32I,Ibex}_FULL`
-(mọi `.coe` + testbench), board file ZedBoard, phần `RISSP_cORE` có trong
+`RV32I_FIXED`, `Ibex_Core`), `firmware_testbench/{SE-RISSP,RV32I,Ibex}_FULL`
+(mọi `.coe` + testbench — **trên repo đổi tên `Viettel_semi` → `firmware_testbench`**
+theo yêu cầu người dùng; máy gốc vẫn là `D:\Viettel_semi`), board file ZedBoard, phần `RISSP_cORE` có trong
 tài liệu này (RTL, Docs, wolfSSL build + source đã vá). **Không** đưa
 `.runs/.sim/.cache`, bitstream, log (người dùng tự chạy lại synth/impl).
 Giữ nguyên cây thư mục máy gốc ở gốc repo nên đường dẫn `$PPRDIR/../..`
@@ -66,7 +67,7 @@ sẵn có vẫn đúng. **Bản gốc trên máy này không bị sửa gì** �
 chỉ làm trên bản sao.
 
 **Chỉnh sửa trong bản sao để chạy được ở máy khác**: đường dẫn tuyệt đối
-`d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi`, board XHub → tương đối (cả trong
+`d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi` (→ `firmware_testbench/`), board XHub → tương đối (cả trong
 `.xpr`, `.bd`, `.xci`, `.gen/.../design_1_blk_mem_gen_0_0.xml`); gỡ tham
 chiếu file của nhánh tự-viết-tay đã xoá khỏi 3 project wolfSSL;
 `RISSP_software`/`Ibex_software` đổi `.coe` sang `rissp_wolfssl.coe` (qua

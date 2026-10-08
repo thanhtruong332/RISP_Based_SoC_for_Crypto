@@ -129,14 +129,14 @@
     </FileSet>
     <FileSet Name="sim_1" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/sim_1" RelGenDir="$PGENDIR/sim_1">
       <Filter Type="Srcs"/>
-      <File Path="$PPRDIR/../../Viettel_semi/RV32I_FULL/tb_wolfssl_software.v">
+      <File Path="$PPRDIR/../../firmware_testbench/RV32I_FULL/tb_wolfssl_software.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../../Viettel_semi/RV32I_FULL/tb_aes_sha3_multi.v">
+      <File Path="$PPRDIR/../../firmware_testbench/RV32I_FULL/tb_aes_sha3_multi.v">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>

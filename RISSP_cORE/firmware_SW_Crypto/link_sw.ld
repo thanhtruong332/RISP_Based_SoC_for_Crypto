@@ -1,5 +1,5 @@
 /* link_sw.ld - dat chuong trinh tai 0x0 (imem), giong link.ld goc trong
- * D:\Viettel_semi\SE-RISSP_FULL\ - dung chung .coe duoc ca 3 loi
+ * firmware_testbench\SE-RISSP_FULL\ - dung chung .coe duoc ca 3 loi
  * (RISSP/RV32I/Ibex boot deu tai word 0 sau khi phan cung da xu ly offset
  * rieng cua Ibex). start.S PHAI la file .o DAU TIEN trong lenh link de
  * _start nam dung tai 0x0.

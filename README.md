@@ -31,7 +31,7 @@ advance_topic/
   RV32I_FIXED/          IP rv32i_fixed (+ project đóng gói)
   Ibex_Core/            IP ibex_core
 SE_RISSP_LIBRARY/       IP RISSP_CORE_NEW, AES_NEOS, SHA_3/SHA3_hardware_new_1_0
-firmware_testbench/     (= D:\Viettel_semi trên máy gốc)
+firmware_testbench/     firmware, testbench và vector kiểm chứng đi kèm repository
   SE-RISSP_FULL/        TOÀN BỘ .coe (dùng chung cho cả 3 lõi) + testbench RISSP + gen_all.py
   RV32I_FULL/           testbench RV32I
   Ibex_FULL/            testbench Ibex + run_manual_sim.tcl / run_all.bat
@@ -73,7 +73,7 @@ Ibex chạy không cần GUI: `firmware_testbench/Ibex_FULL/run_all.bat tb_ibex_
 
 ## Khác biệt so với máy gốc (chỉ để chạy được ở máy khác)
 
-- Đường dẫn tuyệt đối `d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi`, thư mục board XHub → đổi sang tương đối. Thư mục `Viettel_semi` đổi tên thành `firmware_testbench`.
+- Các đường dẫn tuyệt đối của máy phát triển và thư mục board XHub đã được đổi sang đường dẫn tương đối trong repository.
 - 3 project wolfSSL: gỡ tham chiếu tới file của nhánh "phần mềm tự viết tay" đã xoá
   (`*_sw.coe`, `tb_*_software.v`); RISSP_software/Ibex_software đổi `.coe` từ file đã xoá sang
   `rissp_wolfssl.coe` và sinh lại `blk_mem_gen_0`.

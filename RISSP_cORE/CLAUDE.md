@@ -61,16 +61,16 @@ Hướng dẫn từng bước cho người dùng (Word, 2 trang):
 `RV32I_software`/`Ibex_software`), 6 IP repo (`SE_RISSP_LIBRARY/
 {RISSP_CORE_NEW,AES_NEOS,SHA_3/SHA3_hardware_new_1_0}`, `RSA_mark03`,
 `RV32I_FIXED`, `Ibex_Core`), `firmware_testbench/{SE-RISSP,RV32I,Ibex}_FULL`
-(mọi `.coe` + testbench — **trên repo đổi tên `Viettel_semi` → `firmware_testbench`**
-theo yêu cầu người dùng; máy gốc vẫn là `D:\Viettel_semi`), board file ZedBoard, phần `RISSP_cORE` có trong
+(mọi `.coe` + testbench được đóng gói trực tiếp trong repository và dùng
+đường dẫn tương đối), board file ZedBoard, phần `RISSP_cORE` có trong
 tài liệu này (RTL, Docs, wolfSSL build + source đã vá). **Không** đưa
 `.runs/.sim/.cache`, bitstream, log (người dùng tự chạy lại synth/impl).
 Giữ nguyên cây thư mục máy gốc ở gốc repo nên đường dẫn `$PPRDIR/../..`
 sẵn có vẫn đúng. **Bản gốc trên máy này không bị sửa gì** — mọi chỉnh sửa
 chỉ làm trên bản sao.
 
-**Chỉnh sửa trong bản sao để chạy được ở máy khác**: đường dẫn tuyệt đối
-`d:/SE_RISSP_LIBRARY`, `d:/Viettel_semi` (→ `firmware_testbench/`), board XHub → tương đối (cả trong
+**Chỉnh sửa trong bản sao để chạy được ở máy khác**: các đường dẫn tuyệt đối
+đến IP, firmware/testbench và board XHub → tương đối (cả trong
 `.xpr`, `.bd`, `.xci`, `.gen/.../design_1_blk_mem_gen_0_0.xml`); gỡ tham
 chiếu file của nhánh tự-viết-tay đã xoá khỏi 3 project wolfSSL;
 `RISSP_software`/`Ibex_software` đổi `.coe` sang `rissp_wolfssl.coe` (qua
@@ -117,7 +117,7 @@ khớp đúng bảng § TIẾN ĐỘ HIỆN TẠI.
   16blk 7419 · RSA-2048 321039. Project gốc sau nâng cấp: `tb_rv32i_rsa2048`
   PASS 321039.
 - Lý do chu kỳ không đổi: giải mã cả 9 `.coe` của
-  `D:\Viettel_semi\SE-RISSP_FULL` → **0 lệnh SRA/SRAI** (đóng luôn mục
+  `firmware_testbench\SE-RISSP_FULL` → **0 lệnh SRA/SRAI** (đóng luôn mục
   "cần rà soát firmware HW-accelerator có dùng SRA không").
 - **Việc còn lại**: chạy lại Synthesis + Implementation `RV32I_soc_ULTRA`
   để lấy LUT/FF/Power/WNS rev 2 (số 17632 LUT SoC, 26233 FF, 0,438 W,
@@ -251,7 +251,7 @@ chạy — chỉ coi là "chết" khi process đã biến mất VÀ log không c
 < pipeline 2 tầng < pipeline 5 tầng).
 
 **2 bug testbench thật khác tìm ra khi lấy số chu kỳ này**
-(`D:\Viettel_semi\RV32I_FULL\tb_aes_sha3_multi.v`): mảng snoop `m[]` dùng
+(`firmware_testbench\RV32I_FULL\tb_aes_sha3_multi.v`): mảng snoop `m[]` dùng
 slice địa chỉ 5-bit không đủ biểu diễn index marker DONE (đã sửa `[6:2]`→
 `[7:2]`); khối bắt mốc PURE thiếu điều kiện giới hạn địa chỉ nên bắt nhầm
 hàng chục nghìn lần ghi bảng khởi tạo AES vào chu kỳ đo (đã thêm lại guard
@@ -531,7 +531,7 @@ luôn ở định dạng **nhị phân** 32-bit/dòng (bất kể `.coe` khai b�
 16) — script convert phải tự đổi hex→nhị phân, không copy thẳng.
 
 **8 testbench** `tb_ibex_{ecb,cbc,cfb,ctr,sha3,sha3_4,sha3_16,rsa2048}.v`
-tại `D:\Viettel_semi\Ibex_FULL\`, dùng chung `.coe` với RISSP/RV32I, cùng
+tại `firmware_testbench\Ibex_FULL\`, dùng chung `.coe` với RISSP/RV32I, cùng
 cơ chế đo PURE.
 
 #### 📊 KẾT QUẢ CUỐI CÙNG — Implementation thật của `Ibex_SoC`
@@ -696,7 +696,7 @@ Verify: 8 từ mẫu + XOR-fold cả 64 từ khớp `pow(M,65537,N)` Python.
 > 🔴 fmax giảm 59→~50,8 MHz sau khi thêm RSA-2048 — kế hoạch nâng clock
 > lên 55MHz KHÔNG CÒN KHẢ THI, trần mới ~50MHz, tối đa nên 48MHz.
 
-**File**: `D:\Viettel_semi\SE-RISSP_FULL\gen_rsa2048.py`/`rsa2048_key.py`/
+**File**: `firmware_testbench\SE-RISSP_FULL\gen_rsa2048.py`/`rsa2048_key.py`/
 `rsa2048.coe`/`tb_rsa2048.v`. RTL ở `RSA_Core/ws/`. Bản đồ thanh ghi wrapper
 (`C_S_AXI_ADDR_WIDTH`=12, base `0x48000000`, range 64K): `0x000-0x0FC`
 M[0..63] · `0x100-0x1FC` N · `0x200-0x2FC` R2 · `0x300` E · `0x304` N_INV
@@ -790,10 +790,10 @@ cũ 59MHz cũng đã hết hạn cùng lý do).
 - `RISSP_CORE/` — bản "gốc sạch" 14 file `.v` synthesizable, nguồn để đóng gói Vivado IP (`Docs/Vivado.md`).
 - `rissp_constr.xdc` — file ràng buộc timing, có ghi chú so sánh công bằng LUT/power RISSP vs RV32I.
 - `rissp_instruction.md` (root) — 35 lệnh RISSP hỗ trợ + 5 lệnh KHÔNG hỗ trợ (LH/LHU/FENCE/ECALL/EBREAK).
-- `D:\Viettel_semi\SE-RISSP_FULL\` (ngoài repo) — firmware+testbench SoC 4 lõi, mỗi chức năng 1 bộ riêng, sinh bằng `gen_all.py`/`gen_rsa2048.py` (đừng sửa tay). `POWER_W=0,407`.
+- `firmware_testbench/SE-RISSP_FULL/` — firmware+testbench SoC 4 lõi, mỗi chức năng 1 bộ riêng, sinh bằng `gen_all.py`/`gen_rsa2048.py` (đừng sửa tay). `POWER_W=0,407`.
 - `F:\advance_topic\RV32I_soc_ULTRA\` (ngoài repo) — SoC thứ 3, bản sao kiến trúc SE-RISSP_AES_ULTRA thay CPU bằng RV32I 5 tầng, địa chỉ AXI trùng khít nên dùng chung `.coe`.
 - `F:\advance_topic\RV32I_FIXED\` (ngoài repo) — RV32I đã sửa lỗi đường fetch, đóng gói IP `xilinx.com:user:rv32i_fixed:1.0`.
-- `D:\Viettel_semi\RV32I_FULL\` (ngoài repo) — 9 testbench đo chu kỳ SoC RV32I, cùng cơ chế đo RISSP. `POWER_W=0,438`.
+- `firmware_testbench/RV32I_FULL/` — 9 testbench đo chu kỳ SoC RV32I, cùng cơ chế đo RISSP. `POWER_W=0,438`.
 
 ---
 
@@ -938,8 +938,8 @@ hỏi lại**, vì đây sẽ là nhượng bộ kiến trúc thứ 4.
   GITHUB. Người dùng chốt: **chỉ làm việc với những gì CLAUDE.md có nhắc
   tới** — các thư mục không có trong tài liệu (`SHA3_Core_mark2/3`,
   `soc_upgrade_20260916`, `github_upload`, `_audit_tmp`, `firmware_Aes`…)
-  không đụng vào, không đưa lên repo. Cùng ngày: đổi tên `Viettel_semi` →
-  `firmware_testbench` trên repo; **nâng IP RV32I rev 1→2 (sửa SRA) trên
+  không đụng vào, không đưa lên repo. Cùng ngày: chuẩn hóa firmware và
+  testbench dưới `firmware_testbench/`; **nâng IP RV32I rev 1→2 (sửa SRA) trên
   máy gốc + repo**, hồi quy 8/8 PASS chu kỳ không đổi, còn phải đo lại
   LUT/Power RV32I.
 

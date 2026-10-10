@@ -105,7 +105,7 @@ Tổng hợp OOC (`synth_design -mode out_of_context`, chiến lược mặc đ�
 4. Địa chỉ AXI giữ nguyên: AES `0x40000000` · SHA3 `0x44000000` · RSA
    `0x48000000` · UART `0x40600000` · BRAM `0xC0000000`.
 
-Testbench đo chu kỳ: `D:\Viettel_semi\RV32I_FULL\tb_rv32i_{ecb,cbc,cfb,ctr}.v`
+Testbench đo chu kỳ: `firmware_testbench/RV32I_FULL/tb_rv32i_{ecb,cbc,cfb,ctr}.v`
 — dùng lại được nguyên xi, chỉ cần đổi tên instance nếu khối trong BD đổi tên.
 
 ## Còn tồn đọng (chưa sửa, ngoài phạm vi yêu cầu)

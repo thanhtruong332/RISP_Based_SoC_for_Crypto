@@ -16,14 +16,16 @@
 #
 # Ket qua: gop 56 file RTL (dung thu tu tu ibex_compile_order.f) thanh 1
 # file DUY NHAT, bo loi goi assert (dung thuat toan can bang ngoac de xu
-# ly dung ca truong hop trai nhieu dong - da test that, xem
-# D:\Viettel_semi\Ibex_FULL\... / scratchpad session 2026-08-14), roi dong
+# ly dung ca truong hop trai nhieu dong - da test voi bo file trong
+# firmware_testbench/Ibex_FULL), roi dong
 # goi lai IP CUNG VLNV (rissp.local:user:ibex_core:1.0) de Ibex_SoC khong
 # can doi tham chieu IP.
 
-set src_dir    "F:/advance_topic/Ibex_Core/ip_repo/src"
-set order_file "D:/Viettel_semi/Ibex_FULL/ibex_compile_order.f"
-set out_file   "F:/advance_topic/Ibex_Core/ibex_axi_top_combined.sv"
+set script_dir [file dirname [file normalize [info script]]]
+set repo_root  [file normalize [file join $script_dir .. ..]]
+set src_dir    [file join $script_dir ip_repo src]
+set order_file [file join $repo_root firmware_testbench Ibex_FULL ibex_compile_order.f]
+set out_file   [file join $script_dir ibex_axi_top_combined.sv]
 
 set fp [open $order_file r]
 set file_list {}

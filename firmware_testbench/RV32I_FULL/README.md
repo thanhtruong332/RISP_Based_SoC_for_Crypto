@@ -10,7 +10,7 @@ tiếp với bảng số liệu của hệ dùng **RISSP**.
 
 Bản đồ địa chỉ AXI của 2 SoC **trùng khít** (AES `0x40000000`, SHA3
 `0x44000000`, RSA `0x48000000`, BRAM `0xC0000000`), nên `.coe` dùng chung.
-Lấy tại `D:\Viettel_semi\SE-RISSP_FULL\`:
+Lấy tại `firmware_testbench/SE-RISSP_FULL/`:
 
 | Testbench | File `.coe` cần nạp vào `blk_mem_gen_0` |
 |---|---|

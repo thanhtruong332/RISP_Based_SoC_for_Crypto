@@ -165,7 +165,7 @@ Trình biên dịch C **rất hay sinh LH/LHU** khi gặp `short`, `int16_t`,
 biên dịch sạch, chạy không crash, nhưng **đọc ra toàn số 0**.
 
 **Đây là lý do toàn bộ firmware trong `firmware_HashImage/`,
-`firmware_OTA/` và `D:\Viettel_semi\SE-RISSP_FULL\` đều viết bằng assembly
+`firmware_OTA/` và `firmware_testbench/SE-RISSP_FULL/` đều viết bằng assembly
 thuần, chỉ dùng `lw`/`sw`.**
 
 Nếu muốn viết firmware bằng C, chọn 1 trong 2:
@@ -205,7 +205,7 @@ Nếu muốn viết firmware bằng C, chọn 1 trong 2:
   ghi ra bị lệch 1 ô nhớ.
 
 Đây là ràng buộc phần cứng, **không sửa được bằng firmware**. Chi tiết +
-bằng chứng mô phỏng: `D:\Viettel_semi\SE-RISSP_FULL\README.md`.
+bằng chứng mô phỏng: `firmware_testbench/SE-RISSP_FULL/README.md`.
 
 ---
 

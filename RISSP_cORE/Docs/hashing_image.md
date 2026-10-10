@@ -88,7 +88,7 @@ nhiều chu kỳ sẽ hấp thụ lặp lại cùng 1 từ. Khớp đúng cách
 nếu board thật cho digest khác mô phỏng, kiểm tra giả định này trước tiên.
 
 **Ảnh dùng**: Lena 512×512 thật (không phải synthetic), decode từ
-`D:\Viettel_semi\hasing_image\image_hashing\lena_512x512.jpg` bằng Pillow
+`firmware_testbench/hasing_image/image_hashing/lena_512x512.jpg` bằng Pillow
 (`.convert('L')` → grayscale → `.tobytes()`, 262.144 byte). Cùng thư mục
 còn có baboon/cameraman/peppers/zelda 512×512 (bộ ảnh kiểu USC-SIPI, khớp
 ảnh mà paper tham khảo Arif et al. dùng) — có thể tái tạo tương tự nếu cần
@@ -110,7 +110,7 @@ chỉ có 64 hex-char/32 byte; cần đối chiếu lại giá trị chính xác
 dùng cho báo cáo, khả năng cao có 1 ký tự thừa/lỗi chép — xem "Việc còn
 lại" bên dưới.)
 
-Các file đã copy sang `D:\Viettel_semi\hasing_image\` để người dùng
+Các file đã copy sang `firmware_testbench/hasing_image/` để người dùng
 nạp/chạy thử trên Vivado project thật:
 - `hash_lena_512x512.s` (firmware nguồn)
 - `hash_lena_512x512.coe` (program, nạp vào `imem`)
@@ -154,7 +154,7 @@ sử hội thoại.
   nhỏ, unroll (Phiên 8). Tình trạng tồn tại: chưa xác nhận lại.
 - `tb_sha3_multiblock.v` — verify SHA3 multi-block, **vẫn còn dùng được**,
   đã kế thừa cho các nhánh sau.
-- `D:\Viettel_semi\hasing_image\` (ngoài repo) — chứa
+- Bộ dữ liệu ảnh nguồn ngoài bản phát hành công khai chứa
   `gen_loop_firmware.py`, `gen_soc_testbench.py`, ảnh nguồn (Lena/baboon/
   cameraman/peppers/zelda 512×512), và bộ file đã build cho case Lena
   (`.s`/`.coe`/`.v`). Đây là nguồn đầy đủ nhất nếu muốn tái tạo lại kết

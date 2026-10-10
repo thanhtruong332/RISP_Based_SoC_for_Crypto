@@ -16,6 +16,8 @@ proc get_script_folder {} {
 }
 variable script_folder
 set script_folder [_tcl::get_script_folder]
+variable repo_root
+set repo_root [file normalize [file join $script_folder .. ..]]
 
 ################################################################
 # Check if script is running in correct Vivado version.
@@ -174,7 +176,7 @@ if { $bCheckIPsPassed != 1 } {
 # Procedure to create entire design; Provide argument to make
 # procedure reusable. If parentCell is "", will use root.
 proc create_root_design { parentCell } {
-
+  variable repo_root
   variable script_folder
   variable design_name
 
@@ -569,7 +571,7 @@ proc create_root_design { parentCell } {
     CONFIG.Additional_Inputs_for_Power_Estimation {false} \
     CONFIG.Algorithm {Minimum_Area} \
     CONFIG.CTRL_ECC_ALGO {NONE} \
-    CONFIG.Coe_File {d:/Viettel_semi/SE-RISSP_FULL/sha3_16.coe} \
+    CONFIG.Coe_File [file join $repo_root firmware_testbench SE-RISSP_FULL sha3_16.coe] \
     CONFIG.Disable_Collision_Warnings {false} \
     CONFIG.Disable_Out_of_Range_Warnings {false} \
     CONFIG.EN_SLEEP_PIN {false} \

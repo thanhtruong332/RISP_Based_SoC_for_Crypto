@@ -22,7 +22,7 @@ của BRAM** = word 0 của file `.coe` gốc. Không tràn/âm vì địa chỉ
 Ibex sau khi boot luôn ≥ 32 (chương trình chỉ dùng branch nội bộ, không
 nhảy lùi về trước điểm vào).
 
-⇒ **Nạp thẳng file `.coe` gốc trong `D:\Viettel_semi\SE-RISSP_FULL\`**,
+⇒ **Nạp thẳng file `.coe` gốc trong `firmware_testbench/SE-RISSP_FULL/`**,
 không cần sửa/đệm gì — dùng đúng 1 bộ file cho cả 3 hệ RISSP/RV32I/Ibex.
 (Đã cân nhắc phương án khác — đệm 32 từ vào đầu `.coe` — nhưng chọn cách
 này theo yêu cầu giữ nguyên bộ `.coe` chuẩn dùng chung.)
@@ -103,7 +103,7 @@ tín hiệu nội bộ, kể cả bên trong `ibex_core_0`.
   thêm.
 - Dùng **Cách 2** (dòng lệnh) → tự mở tay: mở Vivado (project nào cũng
   được) → **File → Open Waveform Database...** → chọn file
-  `D:\Viettel_semi\Ibex_FULL\_sim_run\<ten_testbench>.wdb`. Kéo tín hiệu từ
+  `firmware_testbench/Ibex_FULL/_sim_run/<ten_testbench>.wdb`. Kéo tín hiệu từ
   cây hierarchy (bên trái) vào cửa sổ waveform giống hệt thao tác đã quen
   với RISSP/RV32I.
 

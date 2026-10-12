@@ -1,3 +1,4 @@
+//Author       : Thanh Truong
 `timescale 1ns / 1ps
 module r_type_block (
     input  [31:0] pc,          

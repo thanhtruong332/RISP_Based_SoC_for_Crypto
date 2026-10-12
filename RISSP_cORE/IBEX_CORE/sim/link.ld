@@ -1,5 +1,8 @@
-/* link.ld - dat chuong trinh tai 0x80 = reset vector that su cua Ibex
-   (boot_addr_i=0 -> fetch dau tien tai 0x80, xem ghi chu trong test_prog.s) */
+/* link.ld: 
+ * Place program at offset 0x80 (Ibex hardware reset vector).
+ * Note: With boot_addr_i=0, the first instruction fetch occurs at 0x80. 
+ * Refer to test_prog.s for details. 
+ */
 OUTPUT_ARCH("riscv")
 ENTRY(_start)
 

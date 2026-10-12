@@ -1,31 +1,13 @@
 `timescale 1ns / 1ps
-// ================================================================
-//  tb_ibex_axi_top - smoke test hanh vi that cho ibex_axi_top
-//
-//  Khong phai unit test tung module - day la test dong (behavioral
-//  simulation qua xsim thuc su, khong chi static elaboration): boot
-//  Ibex qua imem shim, chay test_prog.s (RV32I thuan), ghi 3 gia tri
-//  qua AXI dmem shim + axi_rissp_master.v that, roi tu doi chieu.
-//
-//  imem: model BRAM 1 cong 1-chu-ky (dia chi dang ky tren clock,
-//  dung gia dinh giong het fetch_stage.v cua RISSP).
-//  dmem: 1 AXI4 slave toi gian (luon accept, tra loi sau dung 1
-//  handshake) dong vai tro axi_interconnect + 1 peripheral trong SoC
-//  that.
-// ================================================================
 module tb_ibex_axi_top;
 
   reg clk = 0;
   reg rst_n = 0;
 
   always #5 clk = ~clk; // 100MHz
-
-  // ------------------------------------------------------------
-  // imem: BRAM hanh vi, 1-chu-ky, dia chi dang ky tren clock
-  // ------------------------------------------------------------
   wire [31:0] imem_addr;
   reg  [31:0] imem_rdata;
-  reg  [31:0] imem_mem [0:63]; // 256 byte, chuong trinh nam tai word [32:45] (byte 0x80)
+  reg  [31:0] imem_mem [0:63]; 
   integer     i;
 
   initial begin
@@ -37,22 +19,43 @@ module tb_ibex_axi_top;
     imem_rdata <= imem_mem[imem_addr[31:2]];
   end
 
-  // ------------------------------------------------------------
-  // dmem: AXI4 slave toi gian, backing RAM 64 tu (256 byte)
-  // ------------------------------------------------------------
-  wire [31:0] m_axi_awaddr;  wire [2:0] m_axi_awprot;
-  wire        m_axi_awvalid; reg        m_axi_awready;
-  wire [31:0] m_axi_wdata;   wire [3:0] m_axi_wstrb;
-  wire        m_axi_wvalid;  reg        m_axi_wready;
-  reg  [1:0]  m_axi_bresp;   reg        m_axi_bvalid; wire m_axi_bready;
-  wire [31:0] m_axi_araddr;  wire [2:0] m_axi_arprot;
-  wire        m_axi_arvalid; reg        m_axi_arready;
-  reg  [31:0] m_axi_rdata;   reg  [1:0] m_axi_rresp;
-  reg         m_axi_rvalid;  wire       m_axi_rready;
+// AXI4-Lite Internal Signals
+    
+    // Write Address Channel (AW)
+    wire [31:0] m_axi_awaddr;
+    wire [ 2:0] m_axi_awprot;
+    wire        m_axi_awvalid;
+    reg         m_axi_awready;
 
-  reg [31:0] dmem_mem [0:63];
-  reg        aw_hs, w_hs, ar_hs;
-  reg [31:0] araddr_q;
+    // Write Data Channel (W)
+    wire [31:0] m_axi_wdata;
+    wire [ 3:0] m_axi_wstrb;
+    wire        m_axi_wvalid;
+    reg         m_axi_wready;
+
+    // Write Response Channel (B)
+    reg  [ 1:0] m_axi_bresp;
+    reg         m_axi_bvalid;
+    wire        m_axi_bready;
+
+    // Read Address Channel (AR)
+    wire [31:0] m_axi_araddr;
+    wire [ 2:0] m_axi_arprot;
+    wire        m_axi_arvalid;
+    reg         m_axi_arready;
+
+    // Read Data Channel (R)
+    reg  [31:0] m_axi_rdata;
+    reg  [ 1:0] m_axi_rresp;
+    reg         m_axi_rvalid;
+    wire        m_axi_rready;
+
+    // Internal Memory & Control Flags
+    reg  [31:0] dmem_mem [0:63];
+    reg         aw_hs;
+    reg         w_hs;
+    reg         ar_hs;
+    reg  [31:0] araddr_q;
 
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
@@ -99,29 +102,50 @@ module tb_ibex_axi_top;
       end
     end
   end
-
-  // ------------------------------------------------------------
-  // DUT
-  // ------------------------------------------------------------
+  
   ibex_axi_top #(
       .BootAddr(32'h0)
   ) dut (
-      .clk(clk), .rst_n(rst_n),
-      .imem_addr(imem_addr), .imem_rdata(imem_rdata),
-      .m_axi_awaddr(m_axi_awaddr), .m_axi_awprot(m_axi_awprot),
-      .m_axi_awvalid(m_axi_awvalid), .m_axi_awready(m_axi_awready),
-      .m_axi_wdata(m_axi_wdata), .m_axi_wstrb(m_axi_wstrb),
-      .m_axi_wvalid(m_axi_wvalid), .m_axi_wready(m_axi_wready),
-      .m_axi_bresp(m_axi_bresp), .m_axi_bvalid(m_axi_bvalid), .m_axi_bready(m_axi_bready),
-      .m_axi_araddr(m_axi_araddr), .m_axi_arprot(m_axi_arprot),
-      .m_axi_arvalid(m_axi_arvalid), .m_axi_arready(m_axi_arready),
-      .m_axi_rdata(m_axi_rdata), .m_axi_rresp(m_axi_rresp),
-      .m_axi_rvalid(m_axi_rvalid), .m_axi_rready(m_axi_rready)
+     // Global Signals
+      .clk           (clk),
+      .rst_n         (rst_n),
+
+      // Instruction Memory Interface (IMEM)
+      .imem_addr     (imem_addr),
+      .imem_rdata    (imem_rdata),
+
+      // AXI4-Lite Master Interface
+      
+      // Write Address Channel (AW)
+      .m_axi_awaddr  (m_axi_awaddr),
+      .m_axi_awprot  (m_axi_awprot),
+      .m_axi_awvalid (m_axi_awvalid),
+      .m_axi_awready (m_axi_awready),
+
+      // Write Data Channel (W)
+      .m_axi_wdata   (m_axi_wdata),
+      .m_axi_wstrb   (m_axi_wstrb),
+      .m_axi_wvalid  (m_axi_wvalid),
+      .m_axi_wready  (m_axi_wready),
+
+      // Write Response Channel (B)
+      .m_axi_bresp   (m_axi_bresp),
+      .m_axi_bvalid  (m_axi_bvalid),
+      .m_axi_bready  (m_axi_bready),
+
+      // Read Address Channel (AR)
+      .m_axi_araddr  (m_axi_araddr),
+      .m_axi_arprot  (m_axi_arprot),
+      .m_axi_arvalid (m_axi_arvalid),
+      .m_axi_arready (m_axi_arready),
+
+      // Read Data Channel (R)
+      .m_axi_rdata   (m_axi_rdata),
+      .m_axi_rresp   (m_axi_rresp),
+      .m_axi_rvalid  (m_axi_rvalid),
+      .m_axi_rready  (m_axi_rready)
   );
 
-  // ------------------------------------------------------------
-  // Kich ban + tu kiem tra
-  // ------------------------------------------------------------
   integer errors;
   initial begin
     errors = 0;
@@ -129,40 +153,38 @@ module tb_ibex_axi_top;
     repeat (10) @(posedge clk);
     rst_n = 1;
 
-    // du chu ky cho: boot + 3 lan sw/lw qua AXI (moi giao dich ~5-10 ck) + vong lap
     repeat (2000) @(posedge clk);
 
     if (dmem_mem[0] !== 32'd15) begin
       errors = errors + 1;
-      $display("[FAIL] mem[0x100] = %0d, ky vong 15", dmem_mem[0]);
+      $display("[FAIL] mem[0x100] = %0d (Expected: 15)", dmem_mem[0]);
     end else begin
-      $display("[PASS] mem[0x100] = 15 (x3 = x1+x2, sw dung)");
+      $display("[PASS] mem[0x100] = 15 (x3 = x1+x2, SW successful)");
     end
 
     if (dmem_mem[1] !== 32'd115) begin
       errors = errors + 1;
-      $display("[FAIL] mem[0x104] = %0d, ky vong 115", dmem_mem[1]);
+      $display("[FAIL] mem[0x104] = %0d (Expected: 115)", dmem_mem[1]);
     end else begin
-      $display("[PASS] mem[0x104] = 115 (lw doc lai + addi dung)");
+      $display("[PASS] mem[0x104] = 115 (LW readback + ADDI successful)");
     end
 
     if (dmem_mem[2] !== 32'd5) begin
       errors = errors + 1;
-      $display("[FAIL] mem[0x108] = %0d, ky vong 5", dmem_mem[2]);
+      $display("[FAIL] mem[0x108] = %0d (Expected: 5)", dmem_mem[2]);
     end else begin
-      $display("[PASS] mem[0x108] = 5 (vong lap branch dung 5 lan)");
+      $display("[PASS] mem[0x108] = 5 (Branch loop verified: 5 iterations)");
     end
 
-    if (errors == 0) $display("=== ALL PASS: ibex_axi_top boot + fetch + LSU AXI + branch OK ===");
+    if (errors == 0) $display("=== ALL PASS: ibex_axi_top boot + fetch + LSU AXI + branch OK");
     else              $display("=== %0d FAIL(S) ===", errors);
 
     $finish;
   end
 
-  // watchdog phong truong hop treo
   initial begin
     #100000;
-    $display("[TIMEOUT] mo phong khong ket thuc dung han");
+    $display("[TIMEOUT] simlation ending");
     $finish;
   end
 

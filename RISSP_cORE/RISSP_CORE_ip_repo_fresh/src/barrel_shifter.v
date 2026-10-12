@@ -1,4 +1,4 @@
-Author       : Thanh Truong
+//Author       : Thanh Truong
 `timescale 1ns / 1ps
 module barrel_shifter (
     input  [31:0] data,

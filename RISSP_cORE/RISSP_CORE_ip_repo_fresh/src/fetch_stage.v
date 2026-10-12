@@ -1,4 +1,4 @@
-Author       : Thanh Truong
+//Author       : Thanh Truong
 `timescale 1ns / 1ps
 module fetch_stage (
     input clk, rst_n, stall,

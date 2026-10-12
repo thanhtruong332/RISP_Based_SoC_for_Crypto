@@ -13,7 +13,7 @@ This repository contains the complete Vivado 2024.2 project workspace, packaged 
 The proposed SoC pairs a single-cycle Instruction-Subset Processor (**RISP**) host with dedicated **AES-128**, **SHA3-256**, and **RSA-2048** hardware accelerators via a low-latency **AMBA AXI4-Lite** interconnect.
 
 <p center="align">
-  <img src="docs/images/fig1_soc_architecture.png" alt="Figure 1: Overall Architecture of the RISP-Based SoC" width="85%">
+  <img src="images/fig1_soc_architecture.png" alt="Figure 1: Overall Architecture of the RISP-Based SoC" width="85%">
   <br>
   <em>Figure 1: Overall architecture of the RISP-based SoC and internal processor microarchitecture.</em>
 </p>

@@ -29,7 +29,7 @@ The proposed SoC pairs a single-cycle Instruction-Subset Processor (**RISP**) ho
 The framework adopts a register-mapped control mechanism to coordinate software firmware execution with dedicated hardware accelerators.
 
 <p center="align">
-  <img src="docs/images/fig5_hw_sw_protocol.png" alt="Figure 5: Control and Data Exchange Protocol" width="75%">
+  <img src="images/fig5_hw_sw_protocol.png" alt="Figure 5: Control and Data Exchange Protocol" width="75%">
   <br>
   <em>Figure 5: Control and data exchange protocol between software firmware and memory-mapped hardware accelerators.</em>
 </p>
@@ -47,7 +47,7 @@ The framework adopts a register-mapped control mechanism to coordinate software 
 Supports **ECB, CBC, CTR, and CFB** cipher modes via 128-bit memory-mapped registers and composite field S-boxes.
 
 <p center="align">
-  <img src="docs/images/fig2_aes_engine.png" alt="Figure 2: AES-128 Accelerator Architecture" width="70%">
+  <img src="images/fig2_aes_engine.png" alt="Figure 2: AES-128 Accelerator Architecture" width="70%">
   <br>
   <em>Figure 2: Block diagram of the AES-128 datapath core and top-level control logic.</em>
 </p>
@@ -56,7 +56,7 @@ Supports **ECB, CBC, CTR, and CFB** cipher modes via 128-bit memory-mapped regis
 Implements the Keccak-f sponge construction with a 24-round F-permutation processing pipeline.
 
 <p center="align">
-  <img src="docs/images/fig3_sha3_engine.png" alt="Figure 3: SHA3 Accelerator Architecture" width="70%">
+  <img src="images/fig3_sha3_engine.png" alt="Figure 3: SHA3 Accelerator Architecture" width="70%">
   <br>
   <em>Figure 3: High-level architecture and F-permutation processing pipeline of the SHA3 accelerator.</em>
 </p>
@@ -65,7 +65,7 @@ Implements the Keccak-f sponge construction with a 24-round F-permutation proces
 Accelerates modular exponentiation (\\(C = M^e \pmod N\\)) utilizing a word-serial **Montgomery Multiplication** core.
 
 <p center="align">
-  <img src="docs/images/fig4_rsa_engine.png" alt="Figure 4: RSA Cryptographic Accelerator Architecture" width="70%">
+  <img src="images/fig4_rsa_engine.png" alt="Figure 4: RSA Cryptographic Accelerator Architecture" width="70%">
   <br>
   <em>Figure 4: RSA cryptographic accelerator architecture featuring a Montgomery multiplication core.</em>
 </p>

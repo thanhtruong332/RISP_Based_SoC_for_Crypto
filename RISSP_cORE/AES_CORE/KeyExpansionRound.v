@@ -7,8 +7,6 @@ module KeyExpansionRound (
 );
     genvar i;
     wire [31:0] words [3:0];
-    
-    // ORIGINAL CODE - Đúng cho Big-Endian
     generate
         for (i = 0; i < 4; i = i + 1) begin: KeySplitLoop
             assign words[i] = key_in[127 - i * 32 -: 32];
@@ -44,13 +42,10 @@ module KeyExpansionRound (
                            round_count == 10 ? 8'h36 : 8'h00;
     
     wire [31:0] rcon = {rcon_byte, 24'h000000};
-    
-    // ORIGINAL OUTPUT - Đúng cho Big-Endian
     assign key_out[127:96] = words[0] ^ w3_sub ^ rcon;
     assign key_out[95:64]  = words[1] ^ key_out[127:96];
     assign key_out[63:32]  = words[2] ^ key_out[95:64];
-    assign key_out[31:0]   = words[3] ^ key_out[63:32];
-    
+    assign key_out[31:0]   = words[3] ^ key_out[63:32];   
 endmodule
 
 module KeyExpansion (
@@ -58,19 +53,10 @@ module KeyExpansion (
     input  wire          rst_n,
     input  wire [127:0]  key_in,
     output wire [1407:0] keys_out,
-    output reg           keys_valid   // 1 khi ca 11 round key da on dinh
+    output reg           keys_valid   
 );
 
     localparam Nr = 10;
-
-    // PIPELINE: moi round key la 1 thanh ghi rieng (round_key[0]=key goc,
-    // round_key[1..10]=round key 1..10), giua 2 tang chi co DUNG 1
-    // KeyExpansionRound to hop (thay vi ca chuoi 10 tang to hop lien tuc
-    // nhu ban cu) -> cat critical path key_reg->expanded_keys tu 42 logic
-    // level (~30ns) xuong con ~1 tang (~vai ns), doi lay 10 chu ky de
-    // pipeline day (round_key[10] hop le tu chu ky thu 10 sau khi key_in
-    // on dinh). keys_valid bao hieu thoi diem do de AESEncrypt cho dung
-    // luc moi bat dau dung all_keys (xem start_req trong AESEncrypt.v).
     reg [127:0] round_key [0:Nr];
 
     reg [127:0] key_in_d;

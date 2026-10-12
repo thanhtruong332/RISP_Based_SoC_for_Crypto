@@ -1,8 +1,7 @@
 `timescale 1ns / 1ps
-// Testbench doc lap: kiem tra AESEncrypt (khong qua CPU/AXI) voi dung
-// key/plaintext/IV ma 4 file firmware (super_rv32i_ecb/cbc/ctr/cfb.coe)
-// nap vao AES peripheral, doi chieu voi NIST SP800-38A Appendix F
-// (test vector chuan cong nghiep cho AES-128).
+// Standalone testbench for AESEncrypt.
+// Bypasses CPU/AXI to directly feed stimuli into the AES peripheral.
+// Outputs are verified against NIST SP800-38A Appendix F test vectors.
 module tb_aes_core;
 
     reg clk = 0;
@@ -19,20 +18,34 @@ module tb_aes_core;
     integer errors = 0;
 
     always #5 clk = ~clk;
-
-    // KeyExpansion gio pipeline noi bo (can clk/rst_n) - rst_n tach rieng
-    // vi 'reset' cua AESEncrypt la active-high, khong dung chung cuc tinh.
     wire rst_n = ~reset;
-
+    
     KeyExpansion key_exp (
-        .clk(clk), .rst_n(rst_n),
-        .key_in(key_in), .keys_out(all_keys), .keys_valid(keys_valid)
+        // Global Signals
+        .clk        (clk),
+        .rst_n      (rst_n),
+        
+        // Data & Handshake
+        .key_in     (key_in),
+        .keys_valid (keys_valid),
+        .keys_out   (all_keys)
     );
-
     AESEncrypt dut (
-        .data_in(data_in), .all_keys(all_keys), .keys_valid(keys_valid), .iv_in(iv_in),
-        .mode_sel(mode_sel), .data_out(data_out), .done_tick(done_tick),
-        .clk(clk), .enable(enable), .reset(reset)
+        // Global Signals
+        .clk        (clk),
+        .reset      (reset),
+        
+        // Control Signals
+        .enable     (enable),
+        .mode_sel   (mode_sel),
+        .keys_valid (keys_valid),
+        .done_tick  (done_tick),
+        
+        // Data Path
+        .iv_in      (iv_in),
+        .data_in    (data_in),
+        .all_keys   (all_keys),
+        .data_out   (data_out)
     );
 
     localparam [127:0] KEY  = 128'h2b7e151628aed2a6abf7158809cf4f3c;
@@ -82,7 +95,7 @@ module tb_aes_core;
         run_case(PT1, CTR1,    2'b10, EXP_CTR, "CTR ");
 
         if (errors == 0)
-            $display("ALL 4 MODES PASS - khop NIST SP800-38A test vector");
+            $display("ALL 4 MODES PASS - Verified against NIST SP800-38A test vectors.");
         else
             $display("%0d MODE(S) FAILED", errors);
 

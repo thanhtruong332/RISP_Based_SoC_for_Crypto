@@ -3,7 +3,7 @@
 module AESEncrypt (
     input [127:0]   data_in,
     input [1407:0]  all_keys,
-    input           keys_valid, // all_keys da on dinh (xem KeyExpansion pipeline)
+    input           keys_valid, 
     input [127:0]   iv_in,
     input [1:0]     mode_sel,  // 00:ECB, 01:CBC, 10:CTR, 11:CFB
     output reg [127:0] data_out,
@@ -15,7 +15,7 @@ module AESEncrypt (
 
     localparam Nr = 10;
     
-    // Các trạng thái FSM
+    //FSM status
     localparam IDLE = 2'b00;
     localparam WORK = 2'b01;
     localparam DONE = 2'b10;
@@ -23,7 +23,7 @@ module AESEncrypt (
     reg [1:0] state, next_state;
     reg [3:0] round, next_round;
     reg [127:0] state_reg, next_state_reg;
-    reg start_req; // giu lai yeu cau enable neu no den truoc khi keys_valid
+    reg start_req; // Latch the enable request if it arrives before keys_valid.
 
     wire [127:0] subbyte_out;
     wire [127:0] shiftrow_out;
@@ -32,10 +32,8 @@ module AESEncrypt (
     wire [127:0] current_key;
     wire [127:0] round_input;
 
-    // --- 1. DATAPATH ---
-
+    // DATAPATH
     assign current_key = all_keys[round * 128 +: 128];
-
     SubBytes subbytes_inst (
         .data_in (state_reg),
         .data_out(subbyte_out)
@@ -52,15 +50,14 @@ module AESEncrypt (
     );
 
     assign round_input = (round == 10) ? shiftrow_out : mixcol_out;
-
+    
     AddRoundKey addroundkey_inst (
         .state    (round_input),
         .round_key(current_key),
         .state_out(addroundkey_out)
     );
 
-    // --- 2. STATE MACHINE (FSM) ---
-
+    //STATE MACHINE (FSM)
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             state     <= IDLE;
@@ -74,19 +71,17 @@ module AESEncrypt (
             round     <= next_round;
             state_reg <= next_state_reg;
 
-            // enable co the den truoc khi keys_valid (key vua ghi xong,
-            // pipeline KeyExpansion chua day) -> giu lai yeu cau, tu bat
-            // dau ngay khi keys_valid len 1, khong bo mat request nao.
+         //Handle early 'enable' before 'keys_valid' (due to KeyExpansion pipeline delay): Keep the request pending and auto-start once valid. Zero dropped requests.
             if (next_state == WORK) start_req <= 1'b0;
             else if (enable)        start_req <= 1'b1;
 
-            // Xử lý Output tùy Mode khi hoàn thành mã hóa
+            // Handle mode-specific output upon encryption completion.
             if (state == DONE) begin
                 if (mode_sel == 2'b10 || mode_sel == 2'b11) begin
-                    // ⏱️ CTR & CFB: Output = Keystream ^ Plaintext
+                    // CTR & CFB: Output = Keystream ^ Plaintext
                     data_out <= state_reg ^ data_in; 
                 end else begin
-                    // 🔓 ECB & CBC: Output = Kết quả AES thuần
+                    // ECB & CBC: Output = Raw AES output
                     data_out <= state_reg;
                 end
                 done_tick <= 1;
@@ -105,17 +100,17 @@ module AESEncrypt (
         case (state)
             IDLE: begin
                 if ((enable || start_req) && keys_valid) begin
-                    // Xử lý Input tùy Mode trước khi đưa vào AES
+                    // Mode-specific input processing before the AES core.
                     if (mode_sel == 2'b01) begin
-                        // 🔐 CBC: (Plaintext ^ IV) ^ Key0
+                        // CBC: (Plaintext ^ IV) ^ Key0
                         next_state_reg = (data_in ^ iv_in) ^ all_keys[0 +: 128];
                     end 
                     else if (mode_sel == 2'b10 || mode_sel == 2'b11) begin
-                        // ⏱️ CTR & CFB: IV_Counter ^ Key0 (Không nạp data_in)
+                        // CTR & CFB: IV_Counter ^ Key0 
                         next_state_reg = iv_in ^ all_keys[0 +: 128]; 
                     end 
                     else begin
-                        // 🔓 ECB: Plaintext ^ Key0
+                        // ECB: Plaintext ^ Key0
                         next_state_reg = data_in ^ all_keys[0 +: 128];
                     end
                     

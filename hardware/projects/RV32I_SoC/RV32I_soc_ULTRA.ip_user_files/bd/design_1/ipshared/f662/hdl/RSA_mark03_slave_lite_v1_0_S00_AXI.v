@@ -63,7 +63,7 @@ module RSA_mark03_slave_lite_v1_0_S00_AXI #(
     localparam integer S = RSA_WIDTH / 32;      // so tu 32-bit
 
     //--------------------------------------------------------------
-    // Handshake AXI  (giu nguyen cau truc da verify cua ban cu)
+    // AXI handshake
     //--------------------------------------------------------------
     reg aw_received, w_received, ar_received;
     reg [C_S_AXI_ADDR_WIDTH-1:0] awaddr_reg, araddr_reg;

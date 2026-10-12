@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  Ibex SoC + AES-128 CFB - do throughput + verify NIST
+//  Ibex SoC + AES-128 CFB - throughput measurement + NIST check
 //
-//  Xem chu thich day du trong tb_ibex_cbc.v (cung SoC, cung co che do,
-//  chi khac mode/vector). ⚠️ Boot offset 0x80 da xu ly bang phan cung
-//  (bo tru addsub_bootoffset_0 trong Block Design) - nap THANG file
-//  aes_cfb.coe GOC cua SE-RISSP_FULL, khong can sua/dem gi.
+//  See tb_ibex_cbc.v for the full description (same SoC, same
+//  measurement method; only the mode/vector differs). Boot offset 0x80
+//  is handled in hardware (addsub_bootoffset_0 in the Block Design), so
+//  the same aes_cfb.coe as RISSP/RV32I is loaded unchanged.
 // ================================================================
 module tb_ibex_cfb;
 
@@ -148,7 +148,7 @@ begin
         $display("  (*) POWER_W la so TAM (xem canh bao dau file) - chua dung de trich vao paper.");
     end
     $display("------------------------------------------------");
-    $display("  Doi chieu he RISSP (da sua cau AXI): loi=16  PURE=124 ck");
+    $display("  Doi chieu he RISSP: loi=16  PURE=124 ck");
     $display("  Doi chieu he RV32I               : loi=16  PURE=129 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so RISSP (124) / %0d ck so RV32I (129)", c_pure-124, c_pure-129);

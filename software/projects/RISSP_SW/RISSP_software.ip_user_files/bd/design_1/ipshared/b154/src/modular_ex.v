@@ -15,13 +15,10 @@ module modular_ex (
     wire [6:0] opcode = insn[6:0];
     wire [2:0] funct3 = insn[14:12];
 
-    // barrel_shifter DÙNG CHUNG giữa r_type_block (SLL/SRL/SRA) và
-    // i_type_block (SLLI/SRLI/SRAI) -- thoả hiệp DUY NHẤT của kiến trúc song
-    // song, đã xác nhận với người dùng (xem CLAUDE.md). rs1_data là toán
-    // hạng chung cho cả 2 dạng lệnh; chỉ nguồn shamt khác nhau (thanh ghi
-    // rs2 cho R-type, hằng số insn[24:20] cho I-type). left/arith lấy thẳng
-    // từ funct3/insn[30] vì RV32I mã hoá 2 bit này CÙNG vị trí cho cả R-type
-    // và I-type shift, không cần mux theo opcode.
+    // barrel_shifter shared by r_type_block (SLL/SRL/SRA) and i_type_block
+    // (SLLI/SRLI/SRAI). rs1_data is the common operand; only the shift amount
+    // differs (rs2 for R-type, insn[24:20] for I-type). left/arith come straight
+    // from funct3/insn[30], which sit at the same bits in both formats.
     wire [4:0]  shift_shamt  = (opcode == 7'b0110011) ? rs2_data[4:0] : insn[24:20];
     wire        shift_left   = (funct3 == 3'b001);
     wire        shift_arith  = insn[30];
@@ -36,17 +33,14 @@ module modular_ex (
     wire [31:0] imm_i    = {{20{insn[31]}}, insn[31:20]};
     wire [31:0] alu_op_b = (opcode == 7'b0110011) ? rs2_data : imm_i;
 
-    // comparator DÙNG CHUNG giữa r_type_block (SLT/SLTU) và i_type_block
-    // (SLTI/SLTIU) -- nhượng bộ kiến trúc thứ 2, cùng nguyên lý shifter ở trên.
+    // comparator shared by r_type_block (SLT/SLTU) and i_type_block (SLTI/SLTIU).
     wire        cmp_lt_signed, cmp_lt_unsigned;
     comparator cmp (.op_a(rs1_data), .op_b(alu_op_b),
                      .lt_signed(cmp_lt_signed), .lt_unsigned(cmp_lt_unsigned));
 
-    // alu_adder DÙNG CHUNG giữa r_type_block (ADD/SUB) và i_type_block
-    // (ADDI / địa chỉ LOAD / target JALR) -- nhượng bộ kiến trúc thứ 3, tận
-    // dụng lại alu_op_b ở trên nên không tốn thêm mux 32-bit nào. sub chỉ = 1
-    // khi đúng là lệnh SUB của R-type (funct3=000 và insn[30]=1); insn[30]
-    // ở các trường hợp khác (SRA/SRAI) không liên quan tới adder này.
+    // alu_adder shared by r_type_block (ADD/SUB) and i_type_block (ADDI /
+    // LOAD address / JALR target), reusing alu_op_b above. sub = 1 only for
+    // the R-type SUB (funct3 = 000 and insn[30] = 1).
     wire        alu_sub = (opcode == 7'b0110011) && (funct3 == 3'b000) && insn[30];
     wire [31:0] alu_result;
     alu_adder adder (.op_a(rs1_data), .op_b(alu_op_b), .sub(alu_sub), .result(alu_result));

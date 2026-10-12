@@ -1,29 +1,25 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  Ibex SoC + AES-128 CBC - do throughput + verify NIST
+//  Ibex SoC + AES-128 CBC - throughput measurement + NIST check
 //
-//  SoC: F:\advance_topic\Ibex_SoC (design_1_wrapper), khoi CPU la
-//       ibex_core_0 (IP rissp.local:user:ibex_core:1.0, RV32M=0 de
-//       cung tap lenh RV32I voi RISSP). Dia chi AXI GIONG HET SoC
-//       RISSP (AES 0x40000000/16K, SHA3 0x44000000/64K,
-//       RSA 0x48000000/64K, BRAM debug 0xC0000000/8K, UART
-//       0x40600000/64K) - xem CLAUDE.md muc "TRANG THAI IBEX".
+//  SoC: hardware/projects/Ibex_SoC (design_1_wrapper), CPU block
+//       ibex_core_0 (IP rissp.local:user:ibex_core:1.0, RV32M=0 for the
+//       same RV32I instruction set as RISSP). AXI addresses are identical
+//       to the RISSP SoC (AES 0x40000000/16K, SHA3 0x44000000/64K,
+//       RSA 0x48000000/64K, BRAM debug 0xC0000000/8K, UART 0x40600000/64K).
 //
-//  ⚠️ BOOT OFFSET 0x80 - DA XU LY BANG PHAN CUNG (khong sua .coe):
-//  Ibex KHONG boot tai dia chi 0, ma tai boot_addr_i+0x80 CO DINH
-//  trong RTL (ibex_if_stage.sv:218, khong sua duoc qua tham so). Da
-//  them 1 bo tru hang so to hop (addsub_bootoffset_0, IP c_addsub,
-//  0 chu ky tre) vao giua xlslice_0 va blk_mem_gen_0 trong Block
-//  Design cua Ibex_SoC: addr_BRAM = addr_fetch_word - 32, nen Ibex
-//  fetch tai 0x80 (word 32) doc TRUNG word 0 cua BRAM. => Nap THANG
-//  file aes_cbc.coe GOC cua SE-RISSP_FULL vao blk_mem_gen_0, KHONG
-//  can sua/dem file nao ca - dung chung 100% voi RISSP/RV32I.
+//  Boot offset 0x80: Ibex fetches its first instruction at boot_addr_i +
+//  0x80 (fixed in ibex_if_stage.sv). A combinational constant subtractor
+//  (addsub_bootoffset_0, c_addsub) between xlslice_0 and blk_mem_gen_0
+//  computes addr_BRAM = addr_fetch_word - 32, so fetch address 0x80 reads
+//  BRAM word 0 and the same aes_cbc.coe as RISSP/RV32I is loaded unchanged.
 //
-//  TANG TOC MO PHONG: ep thang xung 40MHz vao net clock noi bo cua
-//  Block Design va ep 'locked'=1 de bo qua thoi gian lock MMCM (~2ms).
+//  Simulation speed-up: a 40 MHz clock is forced onto the internal
+//  clock net of the Block Design and 'locked' = 1 is forced to skip
+//  the MMCM lock time (~2 ms).
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_aes_cbc.v (RISSP) / tb_rv32i_cbc.v
-//  (RV32I) - cung moc, cung cua so, cung cach chot.
+//  Same measurement method as tb_aes_cbc.v (RISSP) / tb_rv32i_cbc.v
+//  (RV32I): same markers, same window, same latching.
 // ================================================================
 module tb_ibex_cbc;
 
@@ -166,7 +162,7 @@ begin
         $display("  (*) POWER_W la so TAM (xem canh bao dau file) - chua dung de trich vao paper.");
     end
     $display("------------------------------------------------");
-    $display("  Doi chieu he RISSP (da sua cau AXI): loi=16  PURE=124 ck");
+    $display("  Doi chieu he RISSP: loi=16  PURE=124 ck");
     $display("  Doi chieu he RV32I               : loi=16  PURE=129 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so RISSP (124) / %0d ck so RV32I (129)", c_pure-124, c_pure-129);

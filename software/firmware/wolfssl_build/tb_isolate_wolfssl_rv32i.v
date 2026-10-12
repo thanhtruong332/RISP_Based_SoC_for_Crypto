@@ -84,7 +84,7 @@ module tb_isolate_wolfssl_rv32i;
         $display("[pc-trace cyc=%0d] imem_addr=%08x imem_rdata=%08x", cyc, imem_addr, imem_rdata);
     end
 
-    // Debug: theo doi tung chu ky AXI trong 300 chu ky dau de tim bug bat tay
+    // Debug: trace every AXI cycle during the first 300 cycles
     always @(posedge clk) if (rst_n && cyc > 0 && cyc < 300) begin
         if (m_axi_awvalid || m_axi_wvalid || m_axi_bvalid || m_axi_arvalid || m_axi_rvalid ||
             m_axi_awready || m_axi_wready)

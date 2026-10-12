@@ -1,37 +1,30 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  RV32I SoC + RSA-2048 verify - do latency + verify ket qua
+//  RV32I SoC + RSA-2048 verify - latency measurement + result check
 //
-//  Chay rsa2048.coe (da nap vao blk_mem_gen_0) tren design_1_wrapper THAT:
-//  dung nguyen axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0 /
-//  axi_bram_ctrl_0 + blk_mem_gen_1 cua Block Design, chi drive 2 port
-//  ngoai cung clk_in1_0 (100MHz) + reset_0 (active-high).
+//  Runs rsa2048.coe (loaded into blk_mem_gen_0) on the real design_1_wrapper:
+//  axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0 / axi_bram_ctrl_0 +
+//  blk_mem_gen_1 of the Block Design; only the external ports clk_in1_0
+//  (100 MHz) and reset_0 (active-high) are driven.
 //
-//  TANG TOC MO PHONG (quan trong): MMCM trong clk_wiz_0 mat khoang 2ms
-//  THOI GIAN MO PHONG moi lock xong va bat dau phat clk_out1 - trong khi
-//  CPU chi can vai tram chu ky (~10us) de chay xong. Neu de nguyen, hon
-//  99% thoi gian mo phong la ngoi cho MMCM => rat lau.
-//  Cach xu ly: ep thang xung 40MHz (dung tan so that cua thiet ke, lay tu
-//  CONFIG.CLKOUT1_REQUESTED_OUT_FREQ) vao net clock noi bo cua Block
-//  Design, va ep luon 'locked'=1 de proc_sys_reset_0 tha reset ngay.
-//  Ve chuc nang hoan toan tuong duong - chi bo qua phan mo hinh hoa qua
-//  trinh khoi dong MMCM (khong lien quan den thuat toan can verify).
+//  Simulation speed-up: the MMCM in clk_wiz_0 needs ~2 ms of simulated
+//  time to lock, while the CPU finishes in ~10 us. The testbench forces a
+//  40 MHz clock (the design frequency, CONFIG.CLKOUT1_REQUESTED_OUT_FREQ)
+//  onto the internal clock net and forces 'locked' = 1 so that
+//  proc_sys_reset_0 releases reset immediately. Functionally equivalent;
+//  only the MMCM start-up is skipped.
 //
-//  Ket qua doc bang cach snoop BRAM_PORTA giua axi_bram_ctrl_0 va
-//  blk_mem_gen_1 (khong the $readmemh vao blk_mem_gen vi la IP ma hoa).
+//  Results are read by snooping BRAM_PORTA between axi_bram_ctrl_0 and
+//  blk_mem_gen_1 (blk_mem_gen is an encrypted IP, $readmemh cannot be used).
 //
-//  SoC: F:\advance_topic\RV32I_soc_ULTRA (design_1_wrapper), khoi CPU la
-//       rv32i_fixed_0 (IP xilinx.com:user:rv32i_fixed:1.0 - ban da sua
-//       duong fetch cho imem BRAM tre 1 chu ky).
+//  CPU block: rv32i_fixed_0 (IP xilinx.com:user:rv32i_fixed:1.0).
 //
-//  PHAI nap dung rsa2048.coe. IP RSA trong SoC nay co RSA_WIDTH=2048 va
-//  C_S00_AXI_ADDR_WIDTH=12 (ban do thanh ghi: M 0x000 / N 0x100 /
+//  Must be used with rsa2048.coe: the RSA IP uses RSA_WIDTH=2048 and
+//  C_S00_AXI_ADDR_WIDTH=12 (register map: M 0x000 / N 0x100 /
 //  R2 0x200 / E 0x300 / N_INV 0x304 / CTRL 0x308 / STATUS 0x30C /
-//  RESULT 0x400). Nap nham rsa.coe (ban 32-bit, ban do thanh ghi cu) se
-//  ghi/doc sai cho va treo.
+//  RESULT 0x400).
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_rsa2048.v cua he RISSP.
-//
+//  Same measurement method as tb_rsa2048.v of the RISSP SoC.
 // ================================================================
 module tb_rv32i_rsa2048;
 

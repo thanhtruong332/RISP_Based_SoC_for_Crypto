@@ -46,7 +46,7 @@ set_property name             ibex_core                                    $core
 set_property display_name     {Ibex RV32 Core (AXI wrapper)}                $core
 set_property version          1.0                                          $core
 set_property vendor_display_name {rissp.local}                             $core
-set_property description {lowRISC Ibex RV32 core (commit c6edaa4060b1a3cd27fda928058db4f0ee3d24bd, pre-CHERIoT), wrapped by ibex_axi_top.sv. Dung CHUNG axi_rissp_master.v (khong sua) lam cau AXI4-Lite dmem voi rissp_core, de so sanh cong bang 2 loi CPU trong cung 1 SoC. imem_addr/imem_rdata la cong BRAM tho 1-chu-ky (khong phai bus chuan), noi tay vao Block Memory Generator. LUU Y: lenh dau tien fetch tai boot_addr_i+0x80 (reset vector co dinh cua Ibex), KHAC RISSP (boot PC=0). Ban v2 (2026-08-14): gop 56 file RTL thanh 1 file + bo loi goi `ASSERT/COVER/ASSUME (rong khi SYNTHESIS) de sua loi Vivado khong tu do du file mo phong trong Block Design.} $core
+set_property description {lowRISC Ibex RV32 core (commit c6edaa4060b1a3cd27fda928058db4f0ee3d24bd, pre-CHERIoT), wrapped by ibex_axi_top.sv. Dung CHUNG axi_rissp_master.v (khong sua) lam cau AXI4-Lite dmem voi rissp_core, de so sanh cong bang 2 loi CPU trong cung 1 SoC. imem_addr/imem_rdata la cong BRAM tho 1-chu-ky (khong phai bus chuan), noi tay vao Block Memory Generator. LUU Y: lenh dau tien fetch tai boot_addr_i+0x80 (reset vector co dinh cua Ibex), KHAC RISSP (boot PC=0). Ban v2: gop 56 file RTL thanh 1 file + bo loi goi `ASSERT/COVER/ASSUME (rong khi SYNTHESIS).} $core
 
 set_property supported_families {zynq Production} $core
 

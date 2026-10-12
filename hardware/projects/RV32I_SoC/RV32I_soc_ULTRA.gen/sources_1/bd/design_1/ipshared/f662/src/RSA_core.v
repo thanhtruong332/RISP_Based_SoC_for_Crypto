@@ -1,79 +1,39 @@
 `timescale 1ns / 1ps
 //============================================================================
-//  RSA Montgomery core  --  core THAT duoc AXI wrapper
-//  (RSA_mark03_slave_lite_v1_0_S00_AXI.v, xem RSA_mark03_1_0/hdl/) instantiate
-//  trong SoC dang dung (SE-RISSP_AES_ULTRA, base AXI 0x48000000).
+//  RSA Montgomery core (module `rsa`)
+//  Instantiated by the AXI wrapper RSA_mark03_slave_lite_v1_0_S00_AXI.v
+//  (RSA_mark03_1_0/hdl/), base address 0x48000000 in the SoC.
 //
-//  VIET LAI 2026-08-13: doi tu nhan TO HOP TOAN DAI sang MONTGOMERY WORD-SERIAL
-//  (thuat toan CIOS, Koc et al. 1996). GIU NGUYEN 100% port list cua module
-//  `rsa` nen wrapper AXI cu van noi duoc, khong sua mot chu nao khi WIDTH=32.
+//  Word-serial Montgomery multiplication (CIOS, Koc et al. 1996). A single
+//  WORD x WORD multiply-accumulate unit is reused, so the number of DSPs does
+//  not grow with WIDTH; only the operand storage grows linearly.
 //
-//  VI SAO PHAI DOI:
-//    Ban cu dung `wire [2*WIDTH-1:0] T = A*B;` - bo nhan to hop TOAN DAI.
-//    Chi phi tang theo BINH PHUONG do rong:
-//        WIDTH=32   -> ~11 DSP     (dang chay)
-//        WIDTH=256  -> ~700 DSP    (vuot xc7z020)
-//        WIDTH=2048 -> ~45000 DSP  (khong the)
-//    => KHONG the len RSA-2048 bang cach doi tham so. Ban nay dung DUNG MOT
-//    bo MAC WORD x WORD lap lai, nen so bo nhan KHONG doi theo do rong;
-//    chi bo nho tang tuyen tinh. Da synth OOC xc7z020 voi WIDTH=2048:
-//        3571 LUT / 4314 FF / 0 BRAM / 4 DSP / WNS +11.65ns @40MHz (fmax ~75MHz)
-//    => RSA-2048 dung IT DSP HON ban 32-bit cu (4 vs ~11).
-//
-//  SUA THEM 2 LOI CUA BAN CU:
-//    1. KENH KE THOI GIAN: ban cu co nhanh `if (E[bit_idx])` nen thoi gian
-//       chay lo so bit 1 cua so mu. Voi khoa CONG KHAI (verify) thi vo hai,
-//       nhung cung mach do dung de KY/GIAI MA se lam lo khoa bi mat.
-//       Ban nay CONST_TIME=1 LUON thuc hien phep nhan, chi GHI KET QUA co
-//       dieu kien -> thoi gian BAT BIEN theo so mu. Da do chung minh:
-//          e=65537   (2 bit 1) : CONST_TIME=1 -> 2349 ck | =0 -> 1404 ck
-//          e=0x1FFFF (17 bit 1): CONST_TIME=1 -> 2349 ck | =0 -> 2349 ck
-//    2. LANG PHI 15 VONG LAP: ban cu luon quet du E_BITS=32 bit du e=65537
-//       chi can 17 bit -> 15 vong dau la binh phuong so 1, vo ich (~40% thoi
-//       gian lo). Ban nay co tham so E_SCAN de chi quet dung so bit can.
-//
-//  Thuat toan CIOS, moi phep nhan Montgomery:
+//  CIOS, one Montgomery multiplication:
 //     for i in 0..S-1:
 //        C=0; for j in 0..S-1: (C,St)=t[j]+a[j]*b[i]+C ; t[j]=St
 //        (C,St)=t[S]+C ; t[S]=St ; t[S+1]=C
 //        m = t[0]*N_INV mod 2^WORD
-//        (C,St)=t[0]+m*n[0]                    // tu thap = 0 theo cau truc
+//        (C,St)=t[0]+m*n[0]                    // low word is 0 by construction
 //        for j in 1..S-1: (C,St)=t[j]+m*n[j]+C ; t[j-1]=St
 //        (C,St)=t[S]+C ; t[S-1]=St ; t[S]=t[S+1]+C
-//     roi tru co dieu kien neu t >= N.
+//     then subtract N if t >= N.
 //
-//  CHI PHI ~ 2*S^2 + 6*S + 8 chu ky / phep nhan Montgomery  (S = WIDTH/WORD)
-//  So phep nhan cho 1 luy thua:
+//  Cost ~ 2*S^2 + 6*S + 8 cycles per Montgomery multiplication (S = WIDTH/WORD)
+//  Multiplications per exponentiation:
 //     CONST_TIME=1 : 2*E_SCAN + 3      (E_SCAN=17 -> 37)
 //     CONST_TIME=0 : E_SCAN + popcount(E) + 3
 //
-//  DA VERIFY bang mo phong that (Vivado xsim), doi chieu pow(M,E,N) cua Python:
-//    | Cau hinh                        | Ket qua   | Chu ky  | Ghi chu        |
-//    | WIDTH=32  E_SCAN=32 (drop-in)   | 25836f4b  |    837  | ban cu: 186 ck |
-//    | WIDTH=32  E_SCAN=17             | 25836f4b  |    462  |                |
-//    | WIDTH=128 E_SCAN=17             | PASS      |   2349  |                |
-//    | WIDTH=256 E_SCAN=17             | PASS      |   6937  |                |
-//    | WIDTH=2048 E_SCAN=17 CT=1       | PASS      | 319809  | 8.00 ms @40MHz |
-//    | WIDTH=2048 E_SCAN=17 CT=0       | PASS      | 190164  | 4.75 ms @40MHz |
-//  Vector WIDTH=32 la DUNG vector dang chay tren SoC that
-//  (M=0c20ed7d E=65537 N=ffe000ff) -> tai tao chinh xac 25836f4b.
+//  CONST_TIME=1 always performs the multiplication and only commits the
+//  result conditionally, so the run time does not depend on the exponent.
+//  E_SCAN is the number of exponent bits scanned (17 for e = 65537).
 //
-//  !! DANH DOI PHAI BIET: o WIDTH=32 ban nay CHAM HON ban cu (837 vs 186 ck)
-//     vi khi S=1 thi chi phi may trang thai lan at phan tinh toan. Word-serial
-//     chi co loi khi WIDTH lon - do la muc dich cua no. Neu van muon giu SoC o
-//     32-bit thi DUNG ban cu; ban nay danh cho khi len 1024/2048-bit.
-//
-//  QUY UOC THAM SO (giu nguyen nhu ban cu):
-//     N_INV    = -N^-1 mod 2^WORD   (chi WORD bit thap duoc dung)
+//  Parameter conventions:
+//     N_INV    = -N^-1 mod 2^WORD   (only the low WORD bits are used)
 //     R2_MOD_N = 2^(2*WIDTH) mod N
-//     ca hai tinh SAN offline bang Python luc build/release, firmware chi ghi
-//     vao nhu hang so.
+//     Both are precomputed offline (Python); firmware writes them as constants.
 //
-//  LUU Y KHI DOI WIDTH:
-//     - WIDTH phai chia het cho WORD (32).
-//     - WIDTH=32 (S=1): tuong thich hoan toan voi wrapper cu (xem bang do o tren).
-//     - WIDTH>32: wrapper AXI phai gom WIDTH/32 lan ghi thanh 1 thanh ghi
-//       rong roi dua vao port M/N/R2_MOD_N.
+//  WIDTH must be a multiple of WORD (32). For WIDTH > 32 the AXI wrapper
+//  assembles WIDTH/32 register writes into each wide port (M/N/R2_MOD_N).
 //============================================================================
 module rsa #(
     parameter WIDTH      = 32,          // do rong toan hang (bit), chia het WORD

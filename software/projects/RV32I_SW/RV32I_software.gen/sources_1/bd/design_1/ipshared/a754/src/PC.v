@@ -18,13 +18,8 @@ module PC(
     output  wire    [31:0]  pc,
 
     // ================================================================
-    //  [FIX 2026-08-13] Dua next_pc RA NGOAI.
-    //  Ly do: imem cua SoC la BRAM co do tre 1 chu ky. Muon du lieu ve
-    //  DUNG NHIP voi pc_reg thi phai gui dia chi sang BRAM SOM 1 chu ky,
-    //  tuc la gui next_pc chu khong phai pc. Truoc day next_pc chi la
-    //  bien noi bo nen rv32i_top khong the lay duoc -> buoc phai gui pc
-    //  -> lech 1 nhip. Xem ghi chu day du trong rv32i_top.v.
-    //  Chi THEM DAY NOI, khong doi mot dong logic nao ben duoi.
+    //  next_pc is exported so that rv32i_top can drive the 1-cycle-latency
+    //  instruction BRAM one cycle early (see rv32i_top.v).
     // ================================================================
     output  wire    [31:0]  next_pc_out
 );
@@ -61,7 +56,7 @@ module PC(
 
     assign  pc  = pc_reg;
 
-    // [FIX] dia chi cua lenh KE TIEP, de rv32i_top gui som cho BRAM
+    // address of the next instruction, sent early to the instruction BRAM
     assign  next_pc_out = next_pc;
 
 endmodule

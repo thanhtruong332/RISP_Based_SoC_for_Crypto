@@ -24490,38 +24490,16 @@ endmodule
 // ===== axi_rissp_master.v =====
 `timescale 1ns / 1ps
 // ================================================================
-//  axi_rissp_master - BAN SUA 2
+//  axi_rissp_master - CPU data-memory port to AXI4-Lite master
 //
-//  Bug goc (da sua tu truoc): stall_cpu = (state != IDLE)
-//    → tai cycle CPU phat request, state con IDLE nen stall=0
-//    → CPU advance PC + write-back NGAY khi transaction moi bat dau
-//    → LOAD lay RDATA chua ve (sai); STORE lech 1 transaction
-//  Fix: them state DONE (giu nguyen o ban nay).
+//  stall_cpu is asserted from the cycle the CPU issues a LOAD/STORE
+//  and released in DONE, so the CPU advances (and writes rd back)
+//  exactly once, after the read data / write response has arrived.
 //
-//  ---- SUA LAN 2 (2026-08-13): bo 1 chu ky lang phi moi giao dich ----
-//  Ban truoc chot ket thuc bang `write_done_all = aw_done & w_done &
-//  b_done`, ma ca 3 deu la THANH GHI → co lai dung 1 chu ky: chu ky N
-//  bat tay B thi b_done moi len o dau chu ky N+1, nen state chi roi
-//  WRITE_DATA o N+2. Do la 1 chu ky khong lam gi.
-//
-//  Nhan xet then chot: theo chuan AXI, slave KHONG duoc phat BVALID
-//  truoc khi da nhan CA dia chi ghi VA du lieu ghi. Nen bat tay B da
-//  HAM Y aw + w xong roi ⇒ chi can chot theo B la du. Tuong tu, RVALID
-//  chi co the den sau khi AR duoc chap nhan ⇒ chi can chot theo R.
-//
-//  ⇒ Bo han 5 thanh ghi co (aw_done/w_done/b_done/ar_done/r_done) va
-//    2 wire write_done_all/read_done_all. Chuyen state ngay trong dung
-//    cai `if` da co san. KHONG them mot cong logic nao - do OOC:
-//    LUT 22→15, FF 146→141 (NHO HON ban cu).
-//
-//  Chi phi moi giao dich (slave luon san sang): 5 → 4 chu ky, bang
-//  dung cau AXI cua loi RV32I ⇒ so sanh 2 loi tro nen cong bang.
-//  Da chay lai tb_rissp_top: PASS 43/43.
-//
-//  (2026-08-14: dong bo lai vao repo tu ban da sua trong Vivado cache
-//  cua SE-RISSP_AES_ULTRA - ban truoc do trong repo van la BAN CU, chua
-//  duoc dong bo tu luc sua. Ap dung dong bo nay cho ca root, RISSP_CORE/
-//  va IBEX_CORE/rtl/ de dam bao RISSP va Ibex dung chung 1 cau AXI y het.)
+//  A write completes on the B handshake and a read on the R handshake:
+//  per AXI, a slave may only assert BVALID after both AW and W have
+//  been accepted, and RVALID only after AR. With an always-ready slave
+//  each transaction takes 4 cycles.
 // ================================================================
 module axi_rissp_master (
     input clk, rst_n,
@@ -24625,55 +24603,30 @@ endmodule
 // ================================================================
 //  ibex_axi_top - drop-in Ibex replacement for rissp_top
 //
-//  Muc dich: cho Ibex "vao dung 1 khuon" voi rissp_top.v de so sanh
-//  cong bang trong CUNG 1 SoC (cung kieu imem BRAM 1-cycle, cung
-//  dung axi_rissp_master.v KHONG SUA GI - giu AXI bridge y het giua
-//  2 core, chi core CPU la bien so duy nhat).
+//  Same port list as rissp_top.v (clk/rst_n, imem_addr/imem_rdata,
+//  AXI4 m_axi_*) and the same unmodified axi_rissp_master.v for data
+//  memory, so the CPU core is the only difference between the SoCs.
 //
-//  Port list (clk/rst_n, imem_addr/imem_rdata, AXI4 m_axi_*) copy
-//  dung ten/be rong tu rissp_top.v de co the thay the truc tiep
-//  trong Vivado Block Design (cung custom-IP interface).
+//  Two shims:
+//   1) imem: Ibex uses OBI (req/gnt/rvalid). The BRAM is single-port,
+//      1-cycle latency and always ready -> gnt = req (combinational),
+//      rvalid = req delayed by one cycle (as in Ibex's
+//      examples/simple_system: "assign instr_gnt = instr_req;").
+//   2) dmem: axi_rissp_master.v has no gnt/rvalid ports, so they are
+//      derived from the edges of stall_cpu: 0->1 when the FSM leaves
+//      IDLE and latches the address (gnt), 1->0 in DONE when
+//      dmem_rdata is valid (rvalid). Only its public ports are used.
 //
-//  2 shim ben trong:
-//   1) imem: instr_req_o/instr_gnt_i/instr_rvalid_i cua Ibex la giao
-//      thuc OBI (req/gnt/rvalid). Voi BRAM 1-cong, 1-chu-ky, luon san
-//      sang nhan dia chi moi -> gnt = req (to hop), rvalid = req tre
-//      1 chu ky. Dung y mau tham chieu cua chinh Ibex
-//      (examples/simple_system/rtl/ibex_simple_system.sv: "assign
-//      instr_gnt = instr_req;").
-//   2) dmem: axi_rissp_master.v KHONG co cong gnt/rvalid rieng (chi co
-//      dmem_addr/wdata/wstrb/read vao va dmem_rdata/stall_cpu ra). Suy
-//      ra gnt/rvalid tu CANH cua stall_cpu (xem chu thich trong chinh
-//      axi_rissp_master.v): stall_cpu bat 0->1 dung luc FSM roi khoi
-//      IDLE va latch dia chi (= luc gnt phai bat), stall_cpu tat 1->0
-//      dung luc DONE (= luc du lieu doc/ghi da xong, dmem_rdata da
-//      chac chan dung). Khong dung vao bat ky signal noi bo nao cua
-//      axi_rissp_master - chi suy ra tu 2 cong da cong bo cua no.
+//  Required Verilog defines (synthesis and simulation filesets):
+//  "FPGA_XILINX=1" and "SYNTHESIS=1".
+//   - FPGA_XILINX=1 selects Ibex's Xilinx target (as in ibex_top.core).
+//   - SYNTHESIS=1 is required for simulation: without it the DPI export
+//     shim under `ifndef SYNTHESIS in ibex_if_stage.sv makes xelab fail.
+//     Everything guarded by SYNTHESIS in Ibex is verification code
+//     (FCOV, assertions), so defining it removes no functional logic.
 //
-//  BAT BUOC khi add vao Vivado project (ca Synthesis lan Simulation
-//  fileset, Project Settings -> General -> Verilog Options -> Verilog
-//  Define): "FPGA_XILINX=1" va "SYNTHESIS=1".
-//   - FPGA_XILINX=1: dung target Vivado chinh chu cua Ibex (khop
-//     "tool_vivado ? (FPGA_XILINX=true)" trong ibex_top.core).
-//   - SYNTHESIS=1: bat buoc cho MO PHONG (khong chi "nen") - thieu no,
-//     xelab CRASH that (loi thuc te da gap va sua trong sandbox nay):
-//     ibex_if_stage.sv co 1 khoi `ifndef SYNTHESIS` (DPI-export shim
-//     cho co-sim testbench rieng cua Ibex, tu nhan la "slightly ugly
-//     hack" trong chinh comment goc) sinh ra 1 ten ham C khong hop le
-//     (co dau cham) khi nam trong generate-block - xelap's C-codegen
-//     khong xu ly duoc. Voi Run Synthesis that, Vivado TU DONG define
-//     SYNTHESIS san (hanh vi chuan cua synth_design), nen thuong khong
-//     bao gio dung loi nay - chi mo phong (xsim, ca IP nay rieng le lan
-//     mo phong Block Design sau nay) moi can set tay. Da verify: RTL
-//     phia sau `ifndef SYNTHESIS` nay va cac cho khac dung SYNTHESIS
-//     trong toan bo IBEX_CORE 100% la code kiem tra/DV (FCOV, assertion
-//     tu-check LFSR, "synopsys translate_off") - dinh nghia SYNTHESIS
-//     KHONG lam mat logic chuc nang nao.
-//
-//  Da verify BANG MO PHONG HANH VI THAT (khong chi static elaboration):
-//  xem sim/tb_ibex_axi_top.v - boot dung tai boot_addr_i+0x80 (xem
-//  tham so BootAddr ben duoi), fetch/decode/execute, SW/LW qua AXI dmem
-//  shim, branch loop - ALL PASS (xsim thuc su chay, 2026-08-13).
+//  Boot: Ibex fetches its first instruction at boot_addr_i + 0x80
+//  (see the BootAddr parameter below).
 // ================================================================
 module ibex_axi_top #(
     // RV32M/RV32B/RV32ZC dung kieu `int` (khong dung thang
@@ -24696,16 +24649,12 @@ module ibex_axi_top #(
     parameter int                 RV32B     = 0, // 0 = RV32BNone
     parameter int                 RV32ZC    = 3, // 3 = RV32ZcaZcbZcmp
     parameter bit                RV32E     = 1'b0,
-    // ⚠️ ICache=1 HIEN KHONG CHAY DUOC - LOI RTL THAT CUA CHINH IBEX o
-    // commit c6edaa4060 (khong phai loi wrapper nay): ibex_top.sv dong
-    // 756-757 gan `icache_tag_alert`/`icache_data_alert` (CA MANG) o BEN
-    // TRONG vong lap generate theo tung "way", trong khi IC_NUM_WAYS=2
-    // (ibex_pkg.sv dong 386, khong the doi tu ben ngoai) -> 2 driver
-    // dong thoi cho cung 1 bien. Da tu verify bang xelab that: "ERROR:
-    // [VRFC 10-3823] variable 'icache_tag_alert' might have multiple
-    // concurrent drivers". PMPEnable=1 rieng le (ICache=0) DA verify
-    // sach (elaborate OK). Chi dung ICache=0 (mac dinh) cho toi khi bug
-    // nay duoc sua o ban Ibex moi hon.
+    // ICache=1 is not usable: in upstream Ibex (commit c6edaa4060) ibex_top.sv
+    // lines 756-757 assign the whole icache_tag_alert/icache_data_alert arrays
+    // inside the per-way generate loop (IC_NUM_WAYS=2), so xelab reports
+    // "[VRFC 10-3823] variable 'icache_tag_alert' might have multiple
+    // concurrent drivers". Keep ICache=0 (default); PMPEnable=1 on its own
+    // elaborates cleanly.
     parameter bit                ICache    = 1'b0,
     parameter bit                PMPEnable = 1'b0,
     parameter int unsigned       MHPMCounterNum = 0,

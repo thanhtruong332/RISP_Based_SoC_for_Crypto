@@ -1,17 +1,15 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  Ibex SoC + SHA3-256 16 block (2168 byte) - do throughput + verify digest
+//  Ibex SoC + SHA3-256 16 block (2168 byte) - throughput measurement + digest check
 //
-//  SoC: F:\advance_topic\Ibex_SoC (design_1_wrapper), khoi CPU la
-//       ibex_core_0 (RV32M=0). Dia chi AXI giong het SoC RISSP.
+//  SoC: hardware/projects/Ibex_SoC (design_1_wrapper), CPU block
+//       ibex_core_0 (RV32M=0). AXI addresses identical to the RISSP SoC.
 //
-//  ⚠️ BOOT OFFSET 0x80 da xu ly bang phan cung (bo tru hang so
-//  addsub_bootoffset_0 chen giua xlslice_0 va blk_mem_gen_0 trong
-//  Block Design cua Ibex_SoC) - nap THANG file sha3_16.coe GOC cua
-//  SE-RISSP_FULL, khong can sua/dem gi.
+//  Boot offset 0x80 is handled in hardware (constant subtractor
+//  addsub_bootoffset_0 between xlslice_0 and blk_mem_gen_0), so the
+//  same sha3_16.coe as RISSP/RV32I is loaded unchanged.
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_sha3_16.v (RISSP) /
-//  tb_rv32i_sha3_16.v (RV32I).
+//  Same measurement method as tb_sha3_16.v (RISSP) / tb_rv32i_sha3_16.v (RV32I).
 // ================================================================
 module tb_ibex_sha3_16;
 
@@ -149,7 +147,7 @@ begin
     $display("  [2] PURE       (absorb1->DIGEST): %5d cyc -> %8.2f Mbps", c_pure, tp_pure);
     $display("  [3] END-TO-END (absorb1->BRAM) : %5d cyc -> %8.2f Mbps", c_e2e, tp_e2e);
     $display("------------------------------------------------");
-    $display("  Doi chieu he RISSP (da sua cau AXI): PURE=6871 ck");
+    $display("  Doi chieu he RISSP: PURE=6871 ck");
     $display("  Doi chieu he RV32I               : PURE=7419 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so RISSP (6871) / %0d ck so RV32I (7419)", c_pure-6871, c_pure-7419);

@@ -14,7 +14,7 @@ module rissp_top (
     wire [4:0]  rs1_addr, rs2_addr, rdest_addr;
     wire        int_dmem_read, stall_from_bridge, rf_wen_raw;
 
-    // FIX CHÍ MẠNG: Ép next_pc về 0 khi đang reset để BRAM nạp đúng lệnh đầu tiên
+    // Hold next_pc at 0 during reset so the BRAM fetches the first instruction.
     wire [31:0] safe_next_pc = (!rst_n) ? 32'h0 : (stall_from_bridge ? pc : next_pc);
     wire rf_wen_final = rf_wen_raw && !stall_from_bridge;
 

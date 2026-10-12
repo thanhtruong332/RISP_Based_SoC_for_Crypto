@@ -1,44 +1,38 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  Ibex SoC + AES-128 ECB - do throughput + verify NIST
+//  Ibex SoC + AES-128 ECB - throughput measurement + NIST check
 //
-//  SoC: F:\advance_topic\Ibex_SoC (design_1_wrapper), khoi CPU la
-//       ibex_core_0 (IP rissp.local:user:ibex_core:1.0, RV32M=0 de
-//       cung tap lenh RV32I voi RISSP). Dia chi AXI GIONG HET SoC
-//       RISSP (AES 0x40000000/16K, SHA3 0x44000000/64K,
-//       RSA 0x48000000/64K, BRAM debug 0xC0000000/8K, UART
-//       0x40600000/64K) - xem CLAUDE.md muc "TRANG THAI IBEX".
+//  SoC: hardware/projects/Ibex_SoC (design_1_wrapper), CPU block
+//       ibex_core_0 (IP rissp.local:user:ibex_core:1.0, RV32M=0 for the
+//       same RV32I instruction set as RISSP). AXI addresses are identical
+//       to the RISSP SoC (AES 0x40000000/16K, SHA3 0x44000000/64K,
+//       RSA 0x48000000/64K, BRAM debug 0xC0000000/8K, UART 0x40600000/64K).
 //
-//  ⚠️ BOOT OFFSET 0x80 - DA XU LY BANG PHAN CUNG (khong sua .coe):
-//  Ibex KHONG boot tai dia chi 0, ma tai boot_addr_i+0x80 CO DINH
-//  trong RTL (ibex_if_stage.sv:218, khong sua duoc qua tham so). Da
-//  them 1 bo tru hang so to hop (addsub_bootoffset_0, IP c_addsub,
-//  0 chu ky tre) vao giua xlslice_0 va blk_mem_gen_0 trong Block
-//  Design cua Ibex_SoC: addr_BRAM = addr_fetch_word - 32, nen Ibex
-//  fetch tai 0x80 (word 32) doc TRUNG word 0 cua BRAM. => Nap THANG
-//  file aes_ecb.coe GOC cua SE-RISSP_FULL vao blk_mem_gen_0, KHONG
-//  can sua/dem file nao ca - dung chung 100% voi RISSP/RV32I.
+//  Boot offset 0x80: Ibex fetches its first instruction at boot_addr_i +
+//  0x80 (fixed in ibex_if_stage.sv). A combinational constant subtractor
+//  (addsub_bootoffset_0, c_addsub) between xlslice_0 and blk_mem_gen_0
+//  computes addr_BRAM = addr_fetch_word - 32, so fetch address 0x80 reads
+//  BRAM word 0 and the same aes_ecb.coe as RISSP/RV32I is loaded unchanged.
 //
-//  Chay aes_ecb.coe (da nap vao blk_mem_gen_0) tren design_1_wrapper
-//  THAT: dung nguyen axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0
-//  / axi_bram_ctrl_0 + blk_mem_gen_1 cua Block Design, chi drive 2
-//  port ngoai cung clk_in1_0 (100MHz) + reset_0 (active-high) + tha
-//  noi UART_0_rxd len muc nghi.
+//  Runs aes_ecb.coe (loaded into blk_mem_gen_0) on the real design_1_wrapper:
+//  axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0 / axi_bram_ctrl_0 +
+//  blk_mem_gen_1 of the Block Design; only the external ports clk_in1_0
+//  (100 MHz) and reset_0 (active-high) are driven
+//  (UART_0_rxd is tied idle).
 //
-//  TANG TOC MO PHONG (quan trong): MMCM trong clk_wiz_0 mat khoang 2ms
-//  THOI GIAN MO PHONG moi lock xong va bat dau phat clk_out1 - trong khi
-//  CPU chi can vai tram chu ky (~10us) de chay xong. Neu de nguyen, hon
-//  99% thoi gian mo phong la ngoi cho MMCM => rat lau.
-//  Cach xu ly: ep thang xung 40MHz (dung tan so that cua thiet ke, lay tu
-//  CONFIG.CLKOUT1_REQUESTED_OUT_FREQ) vao net clock noi bo cua Block
-//  Design, va ep luon 'locked'=1 de proc_sys_reset_0 tha reset ngay.
+//  Simulation speed-up: the MMCM in clk_wiz_0 needs ~2 ms of simulated
+//  time to lock, while the CPU finishes in ~10 us. The testbench forces a
+//  40 MHz clock (the design frequency, CONFIG.CLKOUT1_REQUESTED_OUT_FREQ)
+//  onto the internal clock net and forces 'locked' = 1 so that
+//  proc_sys_reset_0 releases reset immediately. Functionally equivalent;
+//  only the MMCM start-up is skipped.
 //
-//  Ket qua doc bang cach snoop BRAM_PORTA giua axi_bram_ctrl_0 va
-//  blk_mem_gen_1 (khong the $readmemh vao blk_mem_gen vi la IP ma hoa).
+//  Results are read by snooping BRAM_PORTA between axi_bram_ctrl_0 and
+//  blk_mem_gen_1 (blk_mem_gen is an encrypted IP, $readmemh cannot be used).
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_aes_ecb.v (RISSP) / tb_rv32i_ecb.v
-//  (RV32I) - cung moc, cung cua so, cung cach chot - de 3 bang so sanh
-//  duoc voi nhau.
+//  Same measurement method as tb_aes_ecb.v (RISSP) / tb_rv32i_ecb.v
+//  (RV32I): same markers, same window, same latching, so the three
+//  result tables are directly comparable.
 // ================================================================
 module tb_ibex_ecb;
 
@@ -194,7 +188,7 @@ begin
         $display("      o tren CHUA dung de trich vao paper cho toi khi co so Impl that.");
     end
     $display("------------------------------------------------");
-    $display("  Doi chieu he RISSP (da sua cau AXI): loi=16  PURE=88  FULL=124 ck");
+    $display("  Doi chieu he RISSP: loi=16  PURE=88  FULL=124 ck");
     $display("  Doi chieu he RV32I               : loi=16  PURE=93  FULL=129 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so RISSP (88) / %0d ck so RV32I (93)", c_pure-88, c_pure-93);

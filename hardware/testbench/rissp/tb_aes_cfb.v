@@ -23,7 +23,7 @@
 // ================================================================
 module tb_aes_cfb;
 
-parameter real POWER_W  = 0.407;   // Total On-Chip Power SoC RISSP (impl_1, do lai 2026-08-14)
+parameter real POWER_W  = 0.407;   // Total On-Chip Power of the RISSP SoC (impl_1)
 parameter real FREQ_MHZ = 40.0;
 
 reg clk_in1_0 = 0, reset_0 = 0;

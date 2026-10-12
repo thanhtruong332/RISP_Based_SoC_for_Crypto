@@ -1,32 +1,26 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  RV32I SoC + SHA3-256 4 block - do throughput + verify digest
+//  RV32I SoC + SHA3-256 4 block - throughput measurement + digest check
 //
-//  Chay sha3_4.coe (da nap vao blk_mem_gen_0) tren design_1_wrapper THAT:
-//  dung nguyen axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0 /
-//  axi_bram_ctrl_0 + blk_mem_gen_1 cua Block Design, chi drive 2 port
-//  ngoai cung clk_in1_0 (100MHz) + reset_0 (active-high).
+//  Runs sha3_4.coe (loaded into blk_mem_gen_0) on the real design_1_wrapper:
+//  axi_interconnect_0 / clk_wiz_0 / proc_sys_reset_0 / axi_bram_ctrl_0 +
+//  blk_mem_gen_1 of the Block Design; only the external ports clk_in1_0
+//  (100 MHz) and reset_0 (active-high) are driven.
 //
-//  TANG TOC MO PHONG (quan trong): MMCM trong clk_wiz_0 mat khoang 2ms
-//  THOI GIAN MO PHONG moi lock xong va bat dau phat clk_out1 - trong khi
-//  CPU chi can vai tram chu ky (~10us) de chay xong. Neu de nguyen, hon
-//  99% thoi gian mo phong la ngoi cho MMCM => rat lau.
-//  Cach xu ly: ep thang xung 40MHz (dung tan so that cua thiet ke, lay tu
-//  CONFIG.CLKOUT1_REQUESTED_OUT_FREQ) vao net clock noi bo cua Block
-//  Design, va ep luon 'locked'=1 de proc_sys_reset_0 tha reset ngay.
-//  Ve chuc nang hoan toan tuong duong - chi bo qua phan mo hinh hoa qua
-//  trinh khoi dong MMCM (khong lien quan den thuat toan can verify).
+//  Simulation speed-up: the MMCM in clk_wiz_0 needs ~2 ms of simulated
+//  time to lock, while the CPU finishes in ~10 us. The testbench forces a
+//  40 MHz clock (the design frequency, CONFIG.CLKOUT1_REQUESTED_OUT_FREQ)
+//  onto the internal clock net and forces 'locked' = 1 so that
+//  proc_sys_reset_0 releases reset immediately. Functionally equivalent;
+//  only the MMCM start-up is skipped.
 //
-//  Ket qua doc bang cach snoop BRAM_PORTA giua axi_bram_ctrl_0 va
-//  blk_mem_gen_1 (khong the $readmemh vao blk_mem_gen vi la IP ma hoa).
+//  Results are read by snooping BRAM_PORTA between axi_bram_ctrl_0 and
+//  blk_mem_gen_1 (blk_mem_gen is an encrypted IP, $readmemh cannot be used).
 //
-//  SoC: F:dvance_topic\RV32I_soc_ULTRA (design_1_wrapper), khoi CPU la
-//       rv32i_fixed_0 (IP xilinx.com:user:rv32i_fixed:1.0 - ban da sua
-//       duong fetch cho imem BRAM tre 1 chu ky).
+//  CPU block: rv32i_fixed_0 (IP xilinx.com:user:rv32i_fixed:1.0).
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_sha3*.v cua he RISSP: cung moc,
-//  cung cua so, cung cach chot. Doi cach do la hai bang het so sanh duoc.
-//
+//  Same measurement method as tb_sha3*.v of the RISSP SoC (same
+//  markers, same window, same latching).
 // ================================================================
 module tb_rv32i_sha3_4;
 
@@ -151,7 +145,7 @@ begin
     $display("  Message: 536 byte (4288 bit) = 67 tu 64-bit = dung 4 rate block");
     $display("  Moc cycle: absorb1=%0d iLast=%0d oReady=%0d DIGEST=%0d BRAM=%0d",
              t_first, t_last, t_done, t_dig, t_bram);
-    $display("  Doi chieu he RISSP (da sua cau AXI, do 2026-08-13): loi=28  PURE=1771  E2E=1828 ck");
+    $display("  Doi chieu he RISSP: loi=28  PURE=1771  E2E=1828 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so voi RISSP (1771)", c_pure-1771);
     $display("  PC lon nhat quan sat duoc: 0x%0h (chuong trinh dai 204 byte)", pc_max);

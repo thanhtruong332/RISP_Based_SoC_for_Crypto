@@ -1,5 +1,5 @@
-# refresh_rv32i_ip.tcl - sau khi sua ALU.v (bug SRA) trong rv32i_fixed IP
-# repo va bump coreRevision, force RV32I_software nhan dien va dung ban moi.
+# refresh_rv32i_ip.tcl - make RV32I_software pick up a new revision of the
+# rv32i_fixed IP (after editing its sources and bumping coreRevision).
 open_project F:/advance_topic/RV32I_software/RV32I_software.xpr
 
 update_ip_catalog -rebuild

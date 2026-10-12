@@ -5,20 +5,17 @@ module r_type_block (
     input  [31:0] insn,         // Instruction từ IMEM
     input  [31:0] rs1_data,     // Register source 1 data từ RF
     input  [31:0] rs2_data,     // Register source 2 data từ RF
-    // shift_result/cmp_*/alu_result: kết quả từ barrel_shifter, comparator,
-    // adder DÙNG CHUNG với i_type_block (đặt/điều khiển ở modular_ex) -- 3
-    // nhượng bộ kiến trúc duy nhất giữa 2 block. Chỉ còn bitwise (XOR/OR/AND)
-    // dưới đây là hoàn toàn độc lập/riêng của block này.
+    // shift_result / cmp_* / alu_result come from the barrel shifter,
+    // comparator and adder shared with i_type_block (in modular_ex).
+    // The bitwise operations (XOR/OR/AND) below are local to this block.
     input  [31:0] shift_result,
     input         cmp_lt_signed,
     input         cmp_lt_unsigned,
     input  [31:0] alu_result,
 
     // ===== OUTPUTS =====
-    // Chỉ rdest_data: next_pc/rdest_addr/rs1_addr/rs2_addr đã bỏ vì modular_ex
-    // không bao giờ nối các port đó (rdest_addr/rs1_addr/rs2_addr đã được
-    // modular_ex tự decode 1 lần dùng chung cho mọi opcode; next_pc luôn là
-    // pc+4 mặc định, cũng đã có sẵn ở modular_ex) -- giữ lại chỉ tạo dead logic.
+    // Only rdest_data: rdest_addr/rs1_addr/rs2_addr are decoded once in
+    // modular_ex, and the default next_pc (pc+4) is also produced there.
     output reg [31:0] rdest_data    // Result data ghi vào RF
 );
 

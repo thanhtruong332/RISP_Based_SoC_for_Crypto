@@ -1,20 +1,19 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  Ibex SoC + RSA-2048 verify - do latency + verify ket qua
+//  Ibex SoC + RSA-2048 verify - latency measurement + result check
 //
-//  SoC: F:\advance_topic\Ibex_SoC (design_1_wrapper), khoi CPU la
-//       ibex_core_0 (RV32M=0). Dia chi AXI giong het SoC RISSP
+//  SoC: hardware/projects/Ibex_SoC (design_1_wrapper), CPU block
+//       ibex_core_0 (RV32M=0). AXI addresses identical to the RISSP SoC
 //       (RSA base 0x48000000, C_S00_AXI_ADDR_WIDTH=12: M 0x000 /
 //       N 0x100 / R2 0x200 / E 0x300 / N_INV 0x304 / CTRL 0x308 /
 //       STATUS 0x30C / RESULT 0x400).
 //
-//  ⚠️ BOOT OFFSET 0x80 da xu ly bang phan cung (bo tru hang so
-//  addsub_bootoffset_0 chen giua xlslice_0 va blk_mem_gen_0 trong
-//  Block Design cua Ibex_SoC) - nap THANG file rsa2048.coe GOC cua
-//  SE-RISSP_FULL, khong can sua/dem gi. Nap nham file 32-bit rsa.coe
-//  (ban do thanh ghi cu) se ghi/doc sai cho va treo.
+//  Boot offset 0x80 is handled in hardware (constant subtractor
+//  addsub_bootoffset_0 between xlslice_0 and blk_mem_gen_0), so the
+//  same rsa2048.coe as RISSP/RV32I is loaded unchanged. Must be used
+//  with rsa2048.coe (the 32-bit rsa.coe uses a different register map).
 //
-//  CO CHE DO GIU NGUYEN 100% so voi tb_rsa2048.v (RISSP) /
+//  Same measurement method as tb_rsa2048.v (RISSP) /
 //  tb_rv32i_rsa2048.v (RV32I).
 // ================================================================
 module tb_ibex_rsa2048;
@@ -133,7 +132,7 @@ begin
              pc_seen_boot ? "OK" : "CHUA THAY - kiem tra padding .coe");
     $display("  PC lon nhat quan sat duoc: 0x%0h (chuong trinh dai %0d byte, ky vong <= 0x%0h)",
              pc_max, PROG_BYTES, BOOT_OFFSET+PROG_BYTES);
-    $display("  Doi chieu he RISSP (da sua cau AXI): PURE=320972 ck");
+    $display("  Doi chieu he RISSP: PURE=320972 ck");
     $display("  Doi chieu he RV32I               : PURE=321039 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so RISSP (320972) / %0d ck so RV32I (321039)",

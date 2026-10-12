@@ -67,14 +67,9 @@ wire soc_clk = dut.design_1_i.clk_wiz_0_clk_out1;   // doc dung net da ep
 integer cyc = 0;
 always @(posedge soc_clk) if (!reset_0) cyc = cyc + 1;
 
-// --- theo doi PC de chan doan duong fetch (xlslice_0 -> blk_mem_gen_0) ---
-// ----------------------------------------------------------------
-//  [2026-08-13] SoC da thay loi rv32i_pure_0 -> rv32i_fixed_0
-//  (IP xilinx.com:user:rv32i_fixed:1.0, ban da sua duong fetch).
-//  Cac net cua Block Design mang TEN KHOI lam tien to, nen doi khoi
-//  la phai doi theo. Neu sau nay khoi doi ten lan nua, chi can thay
-//  chuoi 'rv32i_fixed_0' trong file nay bang ten khoi moi.
-// ----------------------------------------------------------------
+// --- PC trace for fetch-path debugging (xlslice_0 -> blk_mem_gen_0) ---
+// Block Design net names are prefixed with the CPU instance name
+// 'rv32i_fixed_0'; update it here if the block is renamed.
 wire [31:0] cpu_pc = dut.design_1_i.rv32i_fixed_0_inst_addr;
 reg  [31:0] pc_max = 0;
 always @(posedge soc_clk) if (!reset_0 && cpu_pc > pc_max) pc_max <= cpu_pc;
@@ -230,7 +225,7 @@ begin
         $display("      SoC RISSP dung 0.407 W -> hai ben so sanh nang luong duoc.");
     end
     $display("------------------------------------------------");
-    $display("  Doi chieu he RISSP (da sua cau AXI, do 2026-08-13): loi=16  PURE=88  FULL=124  E2E=117 ck");
+    $display("  Doi chieu he RISSP: loi=16  PURE=88  FULL=124  E2E=117 ck");
     if (c_pure > 0)
         $display("  Chenh lech PURE: %0d ck so voi RISSP (88)", c_pure-88);
     $display("  PC lon nhat quan sat duoc: 0x%0h (chuong trinh dai %0d byte)", pc_max, PROG_BYTES);

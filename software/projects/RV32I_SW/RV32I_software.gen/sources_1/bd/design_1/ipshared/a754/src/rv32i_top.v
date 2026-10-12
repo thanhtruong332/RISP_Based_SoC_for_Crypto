@@ -36,43 +36,14 @@ module rv32i_top(
     wire            bus_stall;
 
     // ================================================================
-    //  [FIX 2026-08-13] SUA DUONG FETCH CHO imem CO DO TRE 1 CHU KY
-    //
-    //  BAN CU:
-    //      assign INST_ADDR   = pc;
-    //      assign Instruction = INST_DATA;
-    //  Cach viet nay chi DUNG khi imem doc TO HOP (do tre 0), dung nhu
-    //  src/Instruction_memory.v (`assign Instruction = mem[pc[31:2]]`).
-    //  Nhung imem trong SoC la blk_mem_gen (BRAM) TRE 1 CHU KY, nen sinh
-    //  ra 2 loi doc lap - ca hai da tai hien duoc bang mo phong:
-    //
-    //   LOI 1 - MAT 1 LENH MOI LAN STALL:
-    //      INST_ADDR bam theo `pc`, ma `pc` bi dong bang khi Stall.
-    //      BRAM vi the doc lai dung dia chi do va GHI DE len lenh dang
-    //      nam cho o ngo ra - lenh do chua kip vao IF_ID nen mat han.
-    //      IF_ID tu giu duoc noi dung cua no, nhung KHONG AI giu ho cai
-    //      thanh ghi nam BEN TRONG BRAM.
-    //      Do moi lenh nho deu gay stall, va firmware co nhip
-    //      lui/addi/sw = 3 lenh - dung bang khoang cach fetch->MEM - nen
-    //      nan nhan luon la lenh nho KE TIEP: 14 lenh sw chi ra duoc 9
-    //      giao dich AXI.
-    //
-    //   LOI 2 - MOI LENH NHAY DEU DU 4 BYTE:
-    //      IF_ID_pc chot theo pc_reg HIEN TAI, con INST_DATA lai la lenh
-    //      cua dia chi TRUOC do -> lech 1 nhip. Vi
-    //      branch_target = pc_of_instruction + offset nen moi beq/jal
-    //      deu nhay qua 4 byte.
-    //
-    //  CACH SUA (giong het co che ma RISSP dung o fetch_stage.v +
-    //  rissp_top.v, da chay dung tu truoc):
-    //    1. Gui `next_pc` thay vi `pc`  -> du lieu BRAM ve dung nhip
-    //       pc_reg, het lech +4.
-    //    2. Khi Stall thi ep dia chi ve `pc` -> BRAM doc LAI chinh lenh
-    //       hien tai thay vi ghi de mat no.
-    //    3. Khi reset thi ep dia chi ve 0 -> nap dung lenh dau tien.
-    //
-    //  Khong doi bat cu thu gi khac: Control_unit / ALU / forwarding /
-    //  hazard / cac tang pipeline giu nguyen 100%.
+    //  Instruction fetch for a 1-cycle-latency imem (blk_mem_gen BRAM)
+    //    1. The BRAM address is next_pc, so the returned instruction
+    //       lines up with pc_reg.
+    //    2. While stalled the address is forced to pc, so the BRAM
+    //       re-reads the current instruction instead of losing it.
+    //    3. During reset the address is forced to 0 to fetch the first
+    //       instruction.
+    //  Same scheme as RISSP (fetch_stage.v / rissp_top.v).
     // ================================================================
     wire [31:0] next_pc_w;
 
@@ -80,12 +51,9 @@ module rv32i_top(
                        : (Stall)  ? pc            // giu lenh dang cho o ngo ra BRAM
                                   : next_pc_w;    // gui som 1 chu ky
     assign Instruction = INST_DATA;
-    //  LUU Y: KHONG duoc ep Instruction ve NOP khi reset. Da thu va SAI:
-    //  no an mat dung 1 nhip fetch (lenh thu 2 cua chuong trinh bi nuot,
-    //  `lui x8` khong chay -> dia chi BRAM ra 0x00000000 thay vi
-    //  0xC0000000). Khong can ep: thanh ghi IF_ID da tu reset ve 0, va
-    //  ma lenh 0x00000000 khong khop case nao trong Control_unit nen moi
-    //  tin hieu dieu khien deu = 0 -> von da la no-op.
+    //  Instruction is not forced to NOP during reset (that would drop one
+    //  fetch): IF_ID resets to 0, and opcode 0x00000000 matches no case in
+    //  Control_unit, so every control signal is 0 - already a no-op.
 
     wire            ID_Flush;
     (* DONT_TOUCH = "yes" *) reg     [31:0]  IF_ID_pc;
@@ -178,9 +146,7 @@ module rv32i_top(
         end
     end
 
-    //ID_EX register - DA SUA (tach bus_stall thanh nhanh GIU NGUYEN)
-    //  Cu: else if(Stall || ID_Flush || Flush) → flush (Stall gom bus_stall → SAI)
-    //  Moi: bus_stall → GIU NGUYEN; flush chi cho hazard/branch/jump
+    //ID_EX register - holds on bus_stall; flushes only on hazard/branch/jump
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             ID_EX_rs1           <= 32'h0;

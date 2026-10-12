@@ -1,26 +1,21 @@
 # run_manual_sim.tcl
 #
-# CHAY MO PHONG THAY THE nut "Run Simulation" cua Vivado GUI - da xac nhan
-# GUI bi 1 gioi han that (xem README.md muc "Vivado GUI Run Simulation bi
-# loi"): khong tu liet ke du 56 file .sv cua ibex_core_0 vao danh sach bien
-# dich, chi vi trung ten module voi ban IP tu quan ly (Vivado tu dong
-# IS_AUTO_DISABLED chung, khong sua duoc tu phia project/fileset).
+# Command-line alternative to Vivado's "Run Simulation" for Ibex_SoC:
+# calls xvlog/xvhdl/xelab/xsim directly with the complete file list.
 #
-# Script nay goi thang xvlog/xvhdl/xelab/xsim voi dung danh sach file (da
-# xac nhan bien dich + elaborate + chay PASS that, 2026-08-14).
+# Usage:
+#   vivado -mode batch -source run_manual_sim.tcl -tclargs <testbench> <coe_name>
 #
-# CACH DUNG:
-#   vivado -mode batch -source run_manual_sim.tcl -tclargs <ten_testbench> <ten_file_coe>
-#
-# Vi du (AES ECB):
+# Example (AES ECB):
 #   ... -tclargs tb_ibex_ecb aes_ecb
-# Vi du (SHA3 16 block):
+# Example (SHA3 16 block):
 #   ... -tclargs tb_ibex_sha3_16 sha3_16
 #
-# YEU CAU TRUOC: Ibex_SoC.xpr da Create HDL Wrapper + Generate Output
-# Products it nhat 1 lan (de co san design_1.v/design_1_wrapper.v/ipshared).
-# KHONG can nap .coe qua GUI truoc - script tu doi tu SE-RISSP_FULL/<coe>.coe
-# vao dung vi tri blk_mem_gen_0 doc luc mo phong (xem buoc buoc MIF).
+# Prerequisite: Create HDL Wrapper + Generate Output Products have been run
+# on Ibex_SoC.xpr at least once (design_1.v / design_1_wrapper.v / ipshared).
+# The firmware is taken from hardware/firmware/<coe_name>.coe and converted to
+# the .mif that blk_mem_gen_0 reads in simulation (see the MIF step), so it
+# does not need to be loaded in the GUI first.
 
 if {$argc < 2} {
     puts "Thieu tham so. Dung: -tclargs <ten_testbench> <ten_file_coe (khong duoi .coe)>"

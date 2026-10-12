@@ -1,37 +1,15 @@
 `timescale 1ns / 1ps
 // ================================================================
-//  axi_rissp_master - BAN SUA 2
+//  axi_rissp_master - CPU data-memory port to AXI4-Lite master
 //
-//  Bug goc (da sua tu truoc): stall_cpu = (state != IDLE)
-//    → tai cycle CPU phat request, state con IDLE nen stall=0
-//    → CPU advance PC + write-back NGAY khi transaction moi bat dau
-//    → LOAD lay RDATA chua ve (sai); STORE lech 1 transaction
-//  Fix: them state DONE (giu nguyen o ban nay).
+//  stall_cpu is asserted from the cycle the CPU issues a LOAD/STORE
+//  and released in DONE, so the CPU advances (and writes rd back)
+//  exactly once, after the read data / write response has arrived.
 //
-//  ---- SUA LAN 2 (2026-08-13): bo 1 chu ky lang phi moi giao dich ----
-//  Ban truoc chot ket thuc bang `write_done_all = aw_done & w_done &
-//  b_done`, ma ca 3 deu la THANH GHI → co lai dung 1 chu ky: chu ky N
-//  bat tay B thi b_done moi len o dau chu ky N+1, nen state chi roi
-//  WRITE_DATA o N+2. Do la 1 chu ky khong lam gi.
-//
-//  Nhan xet then chot: theo chuan AXI, slave KHONG duoc phat BVALID
-//  truoc khi da nhan CA dia chi ghi VA du lieu ghi. Nen bat tay B da
-//  HAM Y aw + w xong roi ⇒ chi can chot theo B la du. Tuong tu, RVALID
-//  chi co the den sau khi AR duoc chap nhan ⇒ chi can chot theo R.
-//
-//  ⇒ Bo han 5 thanh ghi co (aw_done/w_done/b_done/ar_done/r_done) va
-//    2 wire write_done_all/read_done_all. Chuyen state ngay trong dung
-//    cai `if` da co san. KHONG them mot cong logic nao - do OOC:
-//    LUT 22→15, FF 146→141 (NHO HON ban cu).
-//
-//  Chi phi moi giao dich (slave luon san sang): 5 → 4 chu ky, bang
-//  dung cau AXI cua loi RV32I ⇒ so sanh 2 loi tro nen cong bang.
-//  Da chay lai tb_rissp_top: PASS 43/43.
-//
-//  (2026-08-14: dong bo lai vao repo tu ban da sua trong Vivado cache
-//  cua SE-RISSP_AES_ULTRA - ban truoc do trong repo van la BAN CU, chua
-//  duoc dong bo tu luc sua. Ap dung dong bo nay cho ca root, RISSP_CORE/
-//  va IBEX_CORE/rtl/ de dam bao RISSP va Ibex dung chung 1 cau AXI y het.)
+//  A write completes on the B handshake and a read on the R handshake:
+//  per AXI, a slave may only assert BVALID after both AW and W have
+//  been accepted, and RVALID only after AR. With an always-ready slave
+//  each transaction takes 4 cycles.
 // ================================================================
 module axi_rissp_master (
     input clk, rst_n,

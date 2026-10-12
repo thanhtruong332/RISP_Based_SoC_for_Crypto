@@ -106,18 +106,12 @@ module aes_wrapper (
     wire          expanded_keys_valid;
     wire [127:0]  ecb_ciphertext;
 
-    // FIX TIMING (bản 2 — sửa gốc, thay cho bản "thêm 1 thanh ghi sau
-    // KeyExpansion" trước đây không đủ vì KeyExpansion vẫn là 1 khối tổ hợp
-    // 10 tầng liền mạch, chỉ dời điểm kết thúc đường tổ hợp dài, WNS đo thật
-    // trên SE-RISSP_AES_ULTRA vẫn -5.249ns/40MHz, 297 endpoint fail).
-    // KeyExpansion giờ tự pipeline nội bộ (1 thanh ghi giữa MỖI round key,
-    // xem KeyExpansionRound.v) — critical path còn lại chỉ ~1 tầng
-    // KeyExpansionRound (~vài ns), đổi lấy 10 chu kỳ trễ để round key cuối
-    // (round 10) ổn định, báo qua expanded_keys_valid. AESEncrypt tự chờ
-    // đúng tín hiệu này trước khi bắt đầu (xem start_req trong
-    // AESEncrypt.v) nên không phụ thuộc firmware phải chờ đủ lâu giữa lúc
-    // ghi key và lúc ghi start — an toàn dù thứ tự AXI write thay đổi sau
-    // này.
+    // KeyExpansion is pipelined internally (one register per round key, see
+    // KeyExpansionRound.v), so the critical path is a single KeyExpansionRound.
+    // The last round key is ready 10 cycles after the key is written, flagged
+    // by expanded_keys_valid. AESEncrypt waits for it before starting (see
+    // start_req in AESEncrypt.v), so firmware needs no delay between writing
+    // the key and writing start, whatever the order of the AXI writes.
     KeyExpansion key_exp_inst (
         .clk(clk),
         .rst_n(rst_n),

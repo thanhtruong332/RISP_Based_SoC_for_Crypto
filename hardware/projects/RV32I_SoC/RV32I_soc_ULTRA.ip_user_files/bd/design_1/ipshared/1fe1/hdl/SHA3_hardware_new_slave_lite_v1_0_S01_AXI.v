@@ -1,18 +1,11 @@
 `timescale 1 ns / 1 ps
 //============================================================================
-//  SHA3-256 AXI4-Lite slave  --  BAN FINAL (da verify bang mo hinh rissp_top)
+//  SHA3-256 AXI4-Lite slave
 //
-//  KHAC BIET then chot so voi cac ban truoc:
-//    RDATA duoc CHOT VAO THANH GHI ngay khi ar_received (dia chi da latch),
-//    va GIU on dinh suot thoi gian RVALID cao.
-//
-//    Ban cu: rdata to hop theo (read_pulse ? araddr : 0). Cua so hop le chi
-//    dung 1 nhip read_pulse. Khi qua AXI Interconnect (them nhip tre), data
-//    truot khoi cua so -> master chot nham -> BRAM lech / toan 0.
-//
-//    Ban nay: rdata la thanh ghi, on dinh suot RVALID -> giong het cach AES
-//    doc tu data_out_reg (thanh ghi giu on dinh). Firmware SACH chay dung
-//    tren CA RISSP lan RV32IMB, khong can NOP hay exploit dia chi.
+//  RDATA is registered as soon as the read address is latched (ar_received)
+//  and held stable for the whole time RVALID is high (same as AES reading
+//  from data_out_reg), so read data stays valid across the extra latency of
+//  the AXI Interconnect.
 //============================================================================
 module SHA3_hardware_new_slave_lite_v1_0_S01_AXI #
 (
@@ -110,7 +103,7 @@ module SHA3_hardware_new_slave_lite_v1_0_S01_AXI #
         .oBuffer_full(sha3_buffer_full), .f_oAck(sha3_ack),
         .oData(sha3_oData), .oReady(sha3_oReady));
 
-    // --- FIX then chot: RDATA CHOT VAO THANH GHI khi ar_received ---
+    // --- RDATA is registered on ar_received and held while RVALID is high ---
     reg [31:0] axi_rdata;
     assign S_AXI_RDATA = axi_rdata;
     always @(posedge S_AXI_ACLK) begin

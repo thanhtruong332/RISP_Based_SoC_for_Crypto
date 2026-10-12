@@ -1,9 +1,7 @@
 `timescale 1 ns / 1 ps
 // ================================================================
-//  rv32i_ultra_master_lite_v1_0_M00_AXI - BAN SUA (AW+W dong thoi)
-//  Doi tu FSM cu (AW truoc, W sau) → phat AWVALID + WVALID DONG THOI.
-//  Dong bo voi master RV32IMB da sua → fair compare, tranh lech pha.
-//  Chi sua khoi WRITE FSM; doc + instruction giu nguyen.
+//  rv32i_ultra_master_lite_v1_0_M00_AXI
+//  The write FSM issues AWVALID and WVALID together.
 // ================================================================
 module rv32i_ultra_master_lite_v1_0_M00_AXI #
 (

@@ -44,10 +44,8 @@ reg [31:0] t_cyc [0:13];
 reg [13:0] got;
 integer wi2; initial for (wi2=0; wi2<14; wi2=wi2+1) t_cyc[wi2]=0;
 initial got = 14'b0;
-// bram_addr[7:2] (6 bit, khong phai [6:2] 5 bit) - dung [6:2] se khien dia
-// chi 0x80 (DONE, index 32) vong lai trung index 0 (ECB START), ghi de
-// mat marker that. Da bat qua debug: idx0 bi DONE (cyc=852379) ghi de len
-// gia tri that (cyc=4213) vi day chinh la bug nay.
+// bram_addr[7:2] (6 bits): the DONE marker at 0x80 is index 32, which a
+// 5-bit [6:2] slice would wrap onto index 0 (ECB START).
 always @(posedge bram_clk) if (bram_en && bram_we != 4'h0 && bram_addr < 13'd136) begin
     case (bram_addr[7:2])
         0:  begin t_cyc[0]=cyc;  got[0]=1;  end

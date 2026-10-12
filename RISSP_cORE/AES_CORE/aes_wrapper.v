@@ -23,9 +23,6 @@ module aes_wrapper (
                REG_IV_0       = 8'h40, REG_IV_1       = 8'h44,
                REG_IV_2       = 8'h48, REG_IV_3       = 8'h4C;
 
-    // ==============================================================
-    // 1. KHAI BÁO REG 
-    // ==============================================================
     reg [127:0] data_in_reg;
     reg [127:0] key_reg;
     reg [127:0] iv_reg;      
@@ -35,10 +32,8 @@ module aes_wrapper (
     reg         aes_done_latched;
 
     assign ready = 1'b1;
-
-    // ==============================================================
-    // 2. GẮN MÁY ĐO (MARK_DEBUG)
-    // ==============================================================
+    
+    // (MARK_DEBUG for ILA block)
     (* mark_debug = "true" *) wire [127:0] ILA_DATA_IN  = data_in_reg;
     (* mark_debug = "true" *) wire [127:0] ILA_KEY      = key_reg;
     (* mark_debug = "true" *) wire [127:0] ILA_IV       = iv_reg;
@@ -48,10 +43,9 @@ module aes_wrapper (
     (* mark_debug = "true" *) wire [127:0] ILA_CORE_RAW_OUT; 
 
     wire [1:0] core_mode_sel = mode_reg;
-    wire [127:0] final_ciphertext; // Khai báo trước để dùng cho cập nhật IV
-    wire         core_done_tick;   // Khai báo trước để dùng trong khối "Write Logic" bên dưới
+    wire [127:0] final_ciphertext; 
+    wire         core_done_tick;   
 
-    // --- 3. Write Logic & Auto-Update IV ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             data_in_reg <= 128'd0;
@@ -62,14 +56,13 @@ module aes_wrapper (
         end else begin
             start_pulse <= 1'b0; 
             
-            // 🔄 TỰ ĐỘNG CẬP NHẬT IV THEO CHUẨN MÃ HÓA
             if (core_done_tick) begin
                 if (mode_reg == 2'b01 || mode_reg == 2'b11) begin
-                    // CBC (01) và CFB (11): Lấy Ciphertext cuối cùng làm IV cho khối sau
+                    // CBC (01) và CFB (11): Use current ciphertext as IV for the next block.
                     iv_reg <= final_ciphertext; 
                 end 
                 else if (mode_reg == 2'b10) begin
-                    // CTR (10): Tăng Counter lên 1
+                    // CTR (10): Increment counter by 1
                     iv_reg <= iv_reg + 128'd1; 
                 end
             end
@@ -92,7 +85,7 @@ module aes_wrapper (
                     REG_IV_3:      iv_reg[31:0]        <= wdata;
                     
                     REG_CONTROL: begin
-                        // Phân tách đúng theo quy tắc: Bit 0 là start, Bit 2:1 là mode
+                        // Bit 0 for start, Bit 2:1 for mode
                         start_pulse <= wdata[0];
                         mode_reg    <= wdata[2:1]; 
                     end
@@ -100,24 +93,11 @@ module aes_wrapper (
             end
         end
     end
-
-    // --- 4. BỘ ĐIỀU PHỐI VẠN NĂNG (XỬ LÝ LUỒNG DỮ LIỆU) ---
+    
     wire [1407:0] expanded_keys;
     wire          expanded_keys_valid;
     wire [127:0]  ecb_ciphertext;
 
-    // FIX TIMING (bản 2 — sửa gốc, thay cho bản "thêm 1 thanh ghi sau
-    // KeyExpansion" trước đây không đủ vì KeyExpansion vẫn là 1 khối tổ hợp
-    // 10 tầng liền mạch, chỉ dời điểm kết thúc đường tổ hợp dài, WNS đo thật
-    // trên SE-RISSP_AES_ULTRA vẫn -5.249ns/40MHz, 297 endpoint fail).
-    // KeyExpansion giờ tự pipeline nội bộ (1 thanh ghi giữa MỖI round key,
-    // xem KeyExpansionRound.v) — critical path còn lại chỉ ~1 tầng
-    // KeyExpansionRound (~vài ns), đổi lấy 10 chu kỳ trễ để round key cuối
-    // (round 10) ổn định, báo qua expanded_keys_valid. AESEncrypt tự chờ
-    // đúng tín hiệu này trước khi bắt đầu (xem start_req trong
-    // AESEncrypt.v) nên không phụ thuộc firmware phải chờ đủ lâu giữa lúc
-    // ghi key và lúc ghi start — an toàn dù thứ tự AXI write thay đổi sau
-    // này.
     KeyExpansion key_exp_inst (
         .clk(clk),
         .rst_n(rst_n),
@@ -126,12 +106,6 @@ module aes_wrapper (
         .keys_valid(expanded_keys_valid)
     );
 
-    // ĐIỀU CHỈNH ĐẦU VÀO CHO LÕI AES DỰA TRÊN 4 MODE:
-    // - CTR (10) & CFB (11): Nạp IV/Counter vào lõi
-    // - CBC (01): Nạp (Plaintext XOR IV) vào lõi
-    // - ECB (00): Nạp thẳng Plaintext vào lõi
-    //wire [127:0] data_to_core = (core_mode_sel == 2'b10 || core_mode_sel == 2'b11) ? ILA_IV : 
-                                //(core_mode_sel == 2'b01) ? (ILA_DATA_IN ^ ILA_IV) : ILA_DATA_IN;
     wire [127:0] data_to_core = ILA_DATA_IN;
 
     AESEncrypt aes_core_inst (
@@ -147,16 +121,9 @@ module aes_wrapper (
         .done_tick(core_done_tick)
     );
 
-    // ĐIỀU CHỈNH KẾT QUẢ ĐẦU RA DỰA TRÊN 4 MODE:
-    // - CTR (10) & CFB (11): XOR kết quả lõi với Plaintext
-    // - ECB (00) & CBC (01): Lấy trực tiếp kết quả từ lõi
-    //fix cho CTR
-    //assign final_ciphertext = (core_mode_sel == 2'b10 || core_mode_sel == 2'b11) ? (ecb_ciphertext ^ ILA_DATA_IN) : ecb_ciphertext;
-    // SUA THANH - lay truc tiep output cua core cho moi mode:
     assign final_ciphertext = ecb_ciphertext;
     assign ILA_CORE_RAW_OUT = ecb_ciphertext;
 
-    // --- 5. Latch kết quả ---
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             data_out_reg     <= 128'd0;
@@ -171,7 +138,6 @@ module aes_wrapper (
         end
     end
 
-    // --- 6. Read Logic ---
     always @(*) begin
         case (addr[7:0])
             REG_STATUS:     rdata = {31'b0, aes_done_latched};

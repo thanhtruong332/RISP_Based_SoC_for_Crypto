@@ -75,11 +75,46 @@ Accelerates modular exponentiation (\\(C = M^e \pmod N\\)) utilizing a word-seri
 ## 4. Repository Structure
 
 ```text
-advance_topic/
-  ├── SE-RISSP_AES_ULTRA/   # Main SoC: RISSP Host + AES + SHA3 + RSA-2048
-  ├── RV32I_soc_ULTRA/      # Baseline SoC: 5-Stage Pipelined RV32I + Accelerators
-  ├── Ibex_SoC/             # Baseline SoC: 2-Stage Ibex Core + Accelerators
-SE_RISSP_LIBRARY/           # Packaged IP Cores (RISSP_CORE_NEW, AES, SHA3)
-firmware_testbench/
-  └── SE-RISSP_FULL/        # Shared .coe firmware files & testbenches
-docs/images/                # Paper figures (Fig 1 - Fig 5)
+ip_repo/                         # All packaged Vivado IPs (shared by both branches)
+  ├── cpu_rissp/                 # RISSP host core (used by hardware/RISSP_SoC)
+  ├── cpu_rissp_sw/              # RISSP host core packaged for software/RISSP_SW
+  ├── cpu_rv32i/                 # 5-stage RV32I core (used by RV32I_SoC and RV32I_SW)
+  ├── cpu_ibex/                  # 2-stage Ibex core (used by Ibex_SoC and Ibex_SW)
+  ├── acc_aes/                   # AES-128 accelerator (ECB/CBC/CFB/CTR)
+  ├── acc_sha3/                  # SHA3-256 accelerator
+  └── acc_rsa/                   # RSA-2048 Montgomery accelerator
+
+hardware/                        # Accelerator-based SoCs (main results of the paper)
+  ├── projects/
+  │     ├── RISSP_SoC/           # SE-RISSP_AES_ULTRA.xpr : RISSP + AES + SHA3 + RSA
+  │     ├── RV32I_SoC/           # RV32I_soc_ULTRA.xpr    : RV32I + same accelerators
+  │     └── Ibex_SoC/            # Ibex_SoC.xpr           : Ibex  + same accelerators
+  ├── firmware/                  # .s / .coe / .hex shared by all 3 SoCs + gen_all.py, gen_rsa2048.py
+  └── testbench/
+        ├── rissp/               # tb_aes_*.v, tb_sha3*.v, tb_rsa2048.v
+        ├── rv32i/               # tb_rv32i_*.v
+        └── ibex/                # tb_ibex_*.v + run_manual_sim.tcl / run_all.bat
+
+software/                        # Software-only SoCs running wolfSSL (no accelerator)
+  ├── projects/
+  │     ├── RISSP_SW/            # RISSP_software.xpr
+  │     ├── RV32I_SW/            # RV32I_software.xpr
+  │     └── Ibex_SW/             # Ibex_software.xpr
+  ├── firmware/                  # wolfssl_build/ (rissp_wolfssl.coe, aes_sha3_multi.coe), wolfssl_src/, link_sw.ld
+  └── testbench/                 # tb_wolfssl_software.v, tb_aes_sha3_multi.v
+
+board_files/                     # ZedBoard board files (referenced by the projects)
+images/                          # Paper figures (Fig 1 - Fig 5)
+legacy/                          # Old demos (image hashing, OTA), not used by any project
+```
+
+---
+
+## 5. Quick Start
+
+1. Install **Vivado 2024.2** and clone into a short path, e.g. `git clone <repo> D:\RISP`.
+2. Open a project, e.g. `hardware/projects/RISSP_SoC/SE-RISSP_AES_ULTRA.xpr`.
+3. **Run Simulation → Run Behavioral Simulation**. The preloaded firmware gives `[PASS]`:
+   RISSP_SoC = SHA3-256 (492 cycles), RV32I_SoC = RSA-2048 (321,039 cycles), Ibex_SoC = RSA-2048 (320,974 cycles).
+4. To run another workload, set `blk_mem_gen_0` → Coe File to a file in `hardware/firmware/`,
+   **Reset** then **Generate Output Products** on `design_1.bd`, and set the matching testbench from `hardware/testbench/` as top.
